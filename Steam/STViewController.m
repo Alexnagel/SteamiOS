@@ -10,6 +10,8 @@
 
 @interface STViewController ()
 @property (weak, nonatomic) IBOutlet UIWebView *loginWebView;
+@property (strong, nonatomic) NSString *loginURL;
+@property (nonatomic) BOOL *viewPushed;
 @end
 
 @implementation STViewController
@@ -17,25 +19,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _loginURL = @"https://steamcommunity.com/mobilelogin";
 	
+    _viewPushed = NO;
     if ([self userIsLoggedIn] == NO) {
         [self loadWebView];
-    } else {
-        [self performSegueWithIdentifier:@"ProfileView" sender:self];
     }
 }
 
 - (void)loadWebView
 {
-    _loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(145, 190, 20,20)];
-    [_loadingIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-    [_loadingIndicator setHidesWhenStopped:YES];
-    
     [self.loginWebView addSubview:_loadingIndicator];
     self.loginWebView.delegate = self;
+    self.title = @"Login";
     
-    NSString *urlString = @"https://steamcommunity.com/login/home";
-    [self.loginWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]];
+    _loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(145, 190, 20,20)];
+    [_loadingIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [_loadingIndicator startAnimating];
+    
+    [self.loginWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_loginURL]]];
 }
 
 - (NSString*)getUserIDFromCookie {
@@ -62,11 +64,14 @@
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView
 {
     [_loadingIndicator stopAnimating];
+    [_loadingIndicator removeFromSuperview];
+    
+    [theWebView stringByEvaluatingJavaScriptFromString:@"var myNode = document.getElementById(\"global_header\");while (myNode.firstChild) {myNode.removeChild(myNode.firstChild);}"];
     
     NSString* token = [self getUserIDFromCookie];
     if (token != nil) {
         [self saveUserID:token];
-        [theWebView removeFromSuperview];
+        [self userIsLoggedIn];
     }
 }
 
@@ -83,8 +88,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *userID = [defaults stringForKey:@"userID"];
     
-    if (userID != Nil) {
-        return YES;
+    if (userID != Nil && !_viewPushed) {
+        [self performSegueWithIdentifier:@"ProfileView" sender:self];
+        _viewPushed = YES;
     }
     return NO;
 }

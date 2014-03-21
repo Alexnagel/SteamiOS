@@ -1,18 +1,19 @@
 //
-//  STNavigationControllerViewController.m
+//  STProfileViewController.m
 //  Steam
 //
-//  Created by Alex Nagelkerke on 19-03-14.
+//  Created by Alex Nagelkerke on 21/03/14.
 //  Copyright (c) 2014 Alex Nagelkerke. All rights reserved.
 //
 
-#import "STNavigationControllerViewController.h"
+#import "STProfileViewController.h"
 
-@interface STNavigationControllerViewController ()
+@interface STProfileViewController ()
+@property (weak, nonatomic) IBOutlet UIButton *logoutButton;
 
 @end
 
-@implementation STNavigationControllerViewController
+@implementation STProfileViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -21,6 +22,13 @@
         // Custom initialization
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationItem.hidesBackButton = YES;
+    
 }
 
 - (void)viewDidLoad
@@ -35,15 +43,20 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
-*/
+
+- (IBAction)logoutUser:(id)sender
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:@"userID"];
+    [defaults synchronize];
+    
+    [self.navigationController popToRootViewControllerAnimated:NO];
+}
 
 @end

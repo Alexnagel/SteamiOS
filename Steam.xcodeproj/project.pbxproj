@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF8CF50118DC6CD80007D85C /* STProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF8CF50018DC6CD80007D85C /* STProfileViewController.m */; };
+		EF8CF50518DC73E80007D85C /* STApiService.m in Sources */ = {isa = PBXBuildFile; fileRef = EF8CF50418DC73E80007D85C /* STApiService.m */; };
 		FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2BF59E18D9EB5100E64C14 /* STUser.m */; };
 		FA2BF5A218D9EC7F00E64C14 /* STNavigationControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2BF5A118D9EC7F00E64C14 /* STNavigationControllerViewController.m */; };
 		FA85D53F18D2F04A00C96A8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85D53E18D2F04A00C96A8E /* Foundation.framework */; };
@@ -37,6 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF8CF4FF18DC6CD80007D85C /* STProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STProfileViewController.h; sourceTree = "<group>"; };
+		EF8CF50018DC6CD80007D85C /* STProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STProfileViewController.m; sourceTree = "<group>"; };
+		EF8CF50318DC73E80007D85C /* STApiService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STApiService.h; sourceTree = "<group>"; };
+		EF8CF50418DC73E80007D85C /* STApiService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STApiService.m; sourceTree = "<group>"; };
 		FA2BF59D18D9EB5100E64C14 /* STUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STUser.h; sourceTree = "<group>"; };
 		FA2BF59E18D9EB5100E64C14 /* STUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STUser.m; sourceTree = "<group>"; };
 		FA2BF5A018D9EC7F00E64C14 /* STNavigationControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STNavigationControllerViewController.h; sourceTree = "<group>"; };
@@ -87,6 +93,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EF8CF50218DC73940007D85C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EF8CF50318DC73E80007D85C /* STApiService.h */,
+				EF8CF50418DC73E80007D85C /* STApiService.m */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
 		FA2BF59A18D9E67000E64C14 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +109,8 @@
 				FA85D55718D2F04A00C96A8E /* STViewController.m */,
 				FA2BF5A018D9EC7F00E64C14 /* STNavigationControllerViewController.h */,
 				FA2BF5A118D9EC7F00E64C14 /* STNavigationControllerViewController.m */,
+				EF8CF4FF18DC6CD80007D85C /* STProfileViewController.h */,
+				EF8CF50018DC6CD80007D85C /* STProfileViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -149,6 +166,7 @@
 		FA85D54418D2F04A00C96A8E /* Steam */ = {
 			isa = PBXGroup;
 			children = (
+				EF8CF50218DC73940007D85C /* Services */,
 				FA2BF59C18D9E68000E64C14 /* Model */,
 				FA2BF59B18D9E67800E64C14 /* View */,
 				FA2BF59A18D9E67000E64C14 /* Controller */,
@@ -296,6 +314,8 @@
 				FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */,
 				FA85D54B18D2F04A00C96A8E /* main.m in Sources */,
 				FA85D54F18D2F04A00C96A8E /* STAppDelegate.m in Sources */,
+				EF8CF50118DC6CD80007D85C /* STProfileViewController.m in Sources */,
+				EF8CF50518DC73E80007D85C /* STApiService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
