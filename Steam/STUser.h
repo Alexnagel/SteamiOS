@@ -8,6 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-@interface STUser : NSObject
+@interface STUser : NSObject <NSCoding>
+
+- (id)initWithJSONDictionary:(NSDictionary *)json;
+
+@property (readonly) NSString *steamID;
+@property (readonly) NSString *playerName;
+@property (readonly) UIImage  *avatar;
+@property (readonly) NSString *avatarUrl;
+@property (readonly) NSString *lastLogOff;
+@property (readonly) NSDate   *lastUpdated;
 
 @end

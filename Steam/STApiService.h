@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "STUser.h"
 
 @interface STApiService : NSObject
+
+- (id) initWithUserID:(NSString *)userID;
+- (STUser *) getUserJSON;
 
 @end

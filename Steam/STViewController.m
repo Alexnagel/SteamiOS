@@ -11,7 +11,7 @@
 @interface STViewController ()
 @property (weak, nonatomic) IBOutlet UIWebView *loginWebView;
 @property (strong, nonatomic) NSString *loginURL;
-@property (nonatomic) BOOL *viewPushed;
+@property (nonatomic) BOOL viewPushed;
 @end
 
 @implementation STViewController
@@ -21,7 +21,7 @@
     [super viewDidLoad];
     _loginURL = @"https://steamcommunity.com/mobilelogin";
 	
-    _viewPushed = NO;
+    [self setViewPushed:NO];
     if ([self userIsLoggedIn] == NO) {
         [self loadWebView];
     }
@@ -90,7 +90,7 @@
     
     if (userID != Nil && !_viewPushed) {
         [self performSegueWithIdentifier:@"ProfileView" sender:self];
-        _viewPushed = YES;
+        [self setViewPushed:YES];
     }
     return NO;
 }
