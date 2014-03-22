@@ -70,7 +70,8 @@
     
     NSString* token = [self getUserIDFromCookie];
     if (token != nil) {
-        [self saveUserID:token];
+        //[self saveUserID:token];
+        [self saveUserID:@"76561198063049991"];
         [self userIsLoggedIn];
     }
 }

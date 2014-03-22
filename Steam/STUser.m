@@ -13,12 +13,14 @@
 #define LASTSEEN @"lastseen"
 #define AVATAR @"avatar"
 #define LASTUPDATE @"lastupdated"
+#define RECENTGAMES @"recentgames"
 
 @implementation STUser
 
 - (id)initWithJSONDictionary:(NSDictionary *)json
 {
     if (self = [super init]) {
+        // Init standard things
         _steamID    = json[@"steamid"];
         _playerName = json[@"personaname"];
         _lastLogOff = [self convertLastLogOff:json[@"lastlogoff"]];
@@ -37,10 +39,13 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if (self = [super init]) {
+        // init all from decoder
         _steamID        = [decoder decodeObjectForKey:STEAMID];
         _playerName     = [decoder decodeObjectForKey:NAME];
         _lastLogOff     = [decoder decodeObjectForKey:LASTSEEN];
         _avatar         = [decoder decodeObjectForKey:AVATAR];
+        _recentGames    = [decoder decodeObjectForKey:RECENTGAMES];
+        
         _lastUpdated    = [decoder decodeObjectForKey:LASTUPDATE];
     }
     return self;
@@ -60,10 +65,15 @@
     
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[lastLogOff longLongValue]];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"dd MMM, HH:mm"];
+    [formatter setDateFormat:@"dd MMM HH:mm"];
     lastLogOffStr = [formatter stringFromDate:date];
     
     return lastLogOffStr;
+}
+
+- (void)updateRecentGames:(NSMutableArray *)games
+{
+    _recentGames = games;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
@@ -72,6 +82,7 @@
     [encoder encodeObject:self.playerName forKey:NAME];
     [encoder encodeObject:self.lastLogOff forKey:LASTSEEN];
     [encoder encodeObject:self.avatar forKey:AVATAR];
+    [encoder encodeObject:self.recentGames forKey:RECENTGAMES];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
 }
 

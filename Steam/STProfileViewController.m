@@ -19,6 +19,8 @@
 
 @property (nonatomic, strong) NSUserDefaults *defaults;
 @property (nonatomic, strong) NSString *userFile;
+
+@property (nonatomic, strong) NSMutableArray *games;
 @end
 
 @implementation STProfileViewController
@@ -65,15 +67,26 @@
     });
 }
 
+- (void)startUpdateTimer
+{
+    
+}
+
+#pragma User Functions
+
 - (void)initUser
 {
     if ([_defaults objectForKey:@"encodedUser"] != nil) {
         _user = (STUser *)[NSKeyedUnarchiver unarchiveObjectWithFile:_userFile];
+        [self.gamesTable reloadData];
     } else {
-        _user = [_apiService getUserJSON];
+        _user = [_apiService getUserFromJSON];
         
         // Save User
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [_user updateRecentGames:[_apiService getGamesFromJSON]];
+            [self.gamesTable reloadData];
+            
             [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
             [_defaults setObject:@"YES" forKey:@"encodedUser"];
             [_defaults synchronize];
@@ -90,36 +103,35 @@
     _userImage.image    = _user.avatar;
 }
 
-- (UIActivityIndicatorView *)createIndicatorViewWithText:(NSString *)text
+#pragma Game Table functions
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    activityIndicator.frame = CGRectMake(145, 190, 50,30);
-    activityIndicator.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    activityIndicator.backgroundColor = [UIColor clearColor];
-    
-    CGFloat labelX = activityIndicator.bounds.size.width + 2;
-    
-    UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(labelX, 0.0f, 50 - (labelX + 2), 20)];
-    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    label.font = [UIFont boldSystemFontOfSize:12.0f];
-    label.numberOfLines = 1;
-    
-    label.backgroundColor = [UIColor clearColor];
-    label.textColor = [UIColor whiteColor];
-    label.text = text;
-    
-    [activityIndicator addSubview:label];
-    
-    return activityIndicator;
+    return 1;
 }
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    return [_user.recentGames count];
 }
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifier = @"RecentGameCell";
+    UITableViewCell *cell       = [self.gamesTable dequeueReusableCellWithIdentifier:identifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+    }
+    
+    STGame *game = (STGame *)[_user.recentGames objectAtIndex:indexPath.row];
+    cell.textLabel.text         = game.gameName;
+    cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ uren gespeeld", game.playtimeTwoWeeks];
+    cell.imageView.image        = game.imgLogo;
+    
+    return cell;
+}
+
+#pragma NavigationBar
 - (IBAction)logoutUser:(id)sender
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

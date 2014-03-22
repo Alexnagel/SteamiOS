@@ -11,6 +11,7 @@
 @interface STUser : NSObject <NSCoding>
 
 - (id)initWithJSONDictionary:(NSDictionary *)json;
+- (void)updateRecentGames:(NSMutableArray *)games;
 
 @property (readonly) NSString *steamID;
 @property (readonly) NSString *playerName;
@@ -18,5 +19,7 @@
 @property (readonly) NSString *avatarUrl;
 @property (readonly) NSString *lastLogOff;
 @property (readonly) NSDate   *lastUpdated;
+
+@property (readonly) NSMutableArray *recentGames;
 
 @end

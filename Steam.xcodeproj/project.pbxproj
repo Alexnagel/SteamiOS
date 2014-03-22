@@ -22,7 +22,7 @@
 		FA0BCE8818DC9C80007C8D8D /* JSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0BCE7D18DC9C80007C8D8D /* JSONValueTransformer.m */; };
 		FA0BCE8E18DDCA18007C8D8D /* STGame.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0BCE8D18DDCA18007C8D8D /* STGame.m */; };
 		FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2BF59E18D9EB5100E64C14 /* STUser.m */; };
-		FA2BF5A218D9EC7F00E64C14 /* STNavigationControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2BF5A118D9EC7F00E64C14 /* STNavigationControllerViewController.m */; };
+		FA2BF5A218D9EC7F00E64C14 /* STNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2BF5A118D9EC7F00E64C14 /* STNavigationViewController.m */; };
 		FA85D53F18D2F04A00C96A8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85D53E18D2F04A00C96A8E /* Foundation.framework */; };
 		FA85D54118D2F04A00C96A8E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85D54018D2F04A00C96A8E /* CoreGraphics.framework */; };
 		FA85D54318D2F04A00C96A8E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85D54218D2F04A00C96A8E /* UIKit.framework */; };
@@ -82,8 +82,8 @@
 		FA0BCE8D18DDCA18007C8D8D /* STGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STGame.m; sourceTree = "<group>"; };
 		FA2BF59D18D9EB5100E64C14 /* STUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STUser.h; sourceTree = "<group>"; };
 		FA2BF59E18D9EB5100E64C14 /* STUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STUser.m; sourceTree = "<group>"; };
-		FA2BF5A018D9EC7F00E64C14 /* STNavigationControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STNavigationControllerViewController.h; sourceTree = "<group>"; };
-		FA2BF5A118D9EC7F00E64C14 /* STNavigationControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STNavigationControllerViewController.m; sourceTree = "<group>"; };
+		FA2BF5A018D9EC7F00E64C14 /* STNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STNavigationViewController.h; sourceTree = "<group>"; };
+		FA2BF5A118D9EC7F00E64C14 /* STNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STNavigationViewController.m; sourceTree = "<group>"; };
 		FA85D53B18D2F04A00C96A8E /* Steam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Steam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA85D53E18D2F04A00C96A8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FA85D54018D2F04A00C96A8E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -208,8 +208,8 @@
 			children = (
 				FA85D55618D2F04A00C96A8E /* STViewController.h */,
 				FA85D55718D2F04A00C96A8E /* STViewController.m */,
-				FA2BF5A018D9EC7F00E64C14 /* STNavigationControllerViewController.h */,
-				FA2BF5A118D9EC7F00E64C14 /* STNavigationControllerViewController.m */,
+				FA2BF5A018D9EC7F00E64C14 /* STNavigationViewController.h */,
+				FA2BF5A118D9EC7F00E64C14 /* STNavigationViewController.m */,
 				EF8CF4FF18DC6CD80007D85C /* STProfileViewController.h */,
 				EF8CF50018DC6CD80007D85C /* STProfileViewController.m */,
 			);
@@ -417,7 +417,7 @@
 				FA0BCE8218DC9C80007C8D8D /* JSONModelError.m in Sources */,
 				FA0BCE7E18DC9C80007C8D8D /* JSONModel+CoreData.m in Sources */,
 				FA85D55818D2F04A00C96A8E /* STViewController.m in Sources */,
-				FA2BF5A218D9EC7F00E64C14 /* STNavigationControllerViewController.m in Sources */,
+				FA2BF5A218D9EC7F00E64C14 /* STNavigationViewController.m in Sources */,
 				FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */,
 				FA0BCE8118DC9C80007C8D8D /* JSONModelClassProperty.m in Sources */,
 				FA0BCE8318DC9C80007C8D8D /* NSArray+JSONModel.m in Sources */,

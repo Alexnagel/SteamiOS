@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Alex Nagelkerke. All rights reserved.
 //
 
-#import "STNavigationControllerViewController.h"
+#import "STNavigationViewController.h"
 
-@interface STNavigationControllerViewController ()
+@interface STNavigationViewController ()
 
 @end
 
-@implementation STNavigationControllerViewController
+@implementation STNavigationViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

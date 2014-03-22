@@ -10,4 +10,14 @@
 
 @interface STGame : NSObject <NSCoding>
 
+- (id)initWithDictionary:(NSDictionary *)jsonData;
+
+@property (readonly) NSString *gameID;
+@property (readonly) NSString *gameName;
+@property (readonly) NSString *playtimeTwoWeeks;
+@property (readonly) NSString *playtimeForever;
+@property (readonly) NSString *imgLogoURL;
+@property (readonly) UIImage  *imgLogo;
+@property (readonly) NSDate   *lastUpdated;
+
 @end

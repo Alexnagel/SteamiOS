@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface STProfileViewController : UIViewController
+@interface STProfileViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastSeenLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *userImage;
+@property (weak, nonatomic) IBOutlet UITableView *gamesTable;
 
 @end
