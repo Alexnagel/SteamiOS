@@ -14,11 +14,18 @@
 #define PLAYTWOWEEKS @"playtimetwoweeks"
 #define GAMELOGO @"gamelogo"
 #define LASTUPDATE @"lastupdated"
+#define GAMEICON @"gameicon"
 
-#define IMAGEURL @"http://media.steampowered.com/steamcommunity/public/images/apps/%@/%@.jpg"
+#define IMAGEURL @"http://media.steampowered.com/steamcommunity/public/images/apps/%1$@/%2$@.jpg"
 
 
 @implementation STGame
+@synthesize gameID           = _gameID;
+@synthesize gameName         = _gameName;
+@synthesize imgLogo          = _imgLogo;
+@synthesize imgIcon          = _imgIcon;
+@synthesize achievements     = _achievements;
+@synthesize achievementCount = _achievementCount;
 
 - (id)initWithDictionary:(NSDictionary *)jsonData
 {
@@ -26,9 +33,8 @@
     {
         _gameID             = jsonData[@"appid"];
         _gameName           = jsonData[@"name"];
-        _playtimeForever    = [self minutesToHours:jsonData[@"playtime_forever"]];
-        _playtimeTwoWeeks   = [self minutesToHours:jsonData[@"playtime_2weeks"]];
         _imgLogo            = [self getImageFromURL:jsonData[@"img_logo_url"]];
+        _imgIcon            = [self getImageFromURL:jsonData[@"img_icon_url"]];
         _lastUpdated        = [[NSDate alloc]init];
     }
     return self;
@@ -40,24 +46,20 @@
     {
         _gameID             = [decoder decodeObjectForKey:GAMEID];
         _gameName           = [decoder decodeObjectForKey:NAME];
-        _playtimeForever    = [decoder decodeObjectForKey:PLAYFOREVER];
-        _playtimeTwoWeeks   = [decoder decodeObjectForKey:PLAYTWOWEEKS];
         _imgLogo            = [decoder decodeObjectForKey:GAMELOGO];
+        _imgIcon            = [decoder decodeObjectForKey:GAMEICON];
         _lastUpdated        = [decoder decodeObjectForKey:LASTUPDATE];
+        
+        NSString *achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
+        _achievements            = [decoder decodeObjectForKey:achievementStr];
     }
     return self;
-}
-
-- (NSString *)minutesToHours:(NSString *)minutes
-{
-    double uur = [minutes doubleValue] / 60;
-    return [NSString stringWithFormat:@"%.2f", uur];
 }
 
 - (UIImage *)getImageFromURL:(NSString *)imageHash
 {
     UIImage *result;
-    NSString *imageURL = [NSString stringWithFormat:IMAGEURL, _gameID, _imgLogoURL];
+    NSString *imageURL = [NSString stringWithFormat:IMAGEURL, _gameID, imageHash];
     
     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]];
     result       = [UIImage imageWithData:data];
@@ -69,9 +71,8 @@
 {
     [encoder encodeObject:self.gameID forKey:GAMEID];
     [encoder encodeObject:self.gameName forKey:NAME];
-    [encoder encodeObject:self.playtimeForever forKey:PLAYFOREVER];
-    [encoder encodeObject:self.playtimeTwoWeeks forKey:PLAYTWOWEEKS];
     [encoder encodeObject:self.imgLogo forKey:GAMELOGO];
+    [encoder encodeObject:self.imgLogo forKey:GAMEICON];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
 }
 

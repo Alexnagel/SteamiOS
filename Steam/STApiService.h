@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "STUser.h"
 #import "STGame.h"
+#import "STUserGame.h"
 
 @interface STApiService : NSObject
 
 - (id) initWithUserID:(NSString *)userID;
 - (STUser *) getUserFromJSON;
 - (NSMutableArray *)getGamesFromJSON;
+- (NSMutableArray *)getRecentPlayedGamesFromJSON;
 
 @end

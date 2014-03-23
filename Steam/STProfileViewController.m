@@ -9,6 +9,7 @@
 #import "STProfileViewController.h"
 #import "STApiService.h"
 #import "STUser.h"
+#import "STAchievementViewController.h"
 
 #define USER_FILE @"user.txt"
 
@@ -21,6 +22,9 @@
 @property (nonatomic, strong) NSString *userFile;
 
 @property (nonatomic, strong) NSMutableArray *games;
+
+@property (nonatomic, strong) NSTimer *updateTimer;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *updateData;
 @end
 
 @implementation STProfileViewController
@@ -38,8 +42,8 @@
 {
     [super viewWillAppear:animated];
     self.navigationItem.hidesBackButton = YES;
-    
 }
+
 
 - (void)viewDidLoad
 {
@@ -50,16 +54,21 @@
     NSString *documentsDirectory = [paths objectAtIndex:0];
     _userFile = [documentsDirectory stringByAppendingPathComponent:USER_FILE];
     
+    // Set the UserDefaults and load the UserID
     _defaults = [NSUserDefaults standardUserDefaults];
     NSString *userID = [_defaults stringForKey:@"userID"];
+    // Init the api service with userID
     _apiService = [[STApiService alloc] initWithUserID:userID];
     
+    // Run Activity Indicator on main thread
+    // Loading is happening so nothing to do in UI anyways
+    UIActivityIndicatorView *iView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(145, 190, 20,20)];
+    [iView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [iView startAnimating];
+    [self.view addSubview:iView];
+    
+    //Run the init of the user in seperate thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIActivityIndicatorView *iView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(145, 190, 20,20)];
-        [iView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-        [iView startAnimating];
-        [self.view addSubview:iView];
-        
         [self initUser];
         
         [iView stopAnimating];
@@ -67,25 +76,54 @@
     });
 }
 
+#pragma mark - Update Functions
 - (void)startUpdateTimer
 {
-    
+    // Start The update timer
+    // run every 5min
+    [NSTimer scheduledTimerWithTimeInterval:300
+                                     target:self
+                                   selector:@selector(updateData:)
+                                   userInfo:nil
+                                    repeats:YES];
 }
 
-#pragma User Functions
+- (void)updateData:(NSTimer *)timer
+{
+    // Run in seperate thread
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // Update the user data
+        [self setUser:[_apiService getUserFromJSON]];
+        
+        // Update recently played games data
+        [_user updateRecentGames:[_apiService getRecentPlayedGamesFromJSON]];
+        [self reloadTableAsync];
+        
+        // Save the updated data
+        [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
+        [_defaults setObject:@"YES" forKey:@"encodedUser"];
+        [_defaults synchronize];
+    });
+}
 
+#pragma mark - User Functions
+// Init the user from decoder or from JSON and the encode
 - (void)initUser
 {
+    // Check if user has been saved already
+    // if so load from memory
     if ([_defaults objectForKey:@"encodedUser"] != nil) {
         _user = (STUser *)[NSKeyedUnarchiver unarchiveObjectWithFile:_userFile];
-        [self.gamesTable reloadData];
+        [self reloadTableAsync];
+        
     } else {
         _user = [_apiService getUserFromJSON];
         
         // Save User
+        // Use async to unload main thread
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [_user updateRecentGames:[_apiService getGamesFromJSON]];
-            [self.gamesTable reloadData];
+            [_user updateRecentGames:[_apiService getRecentPlayedGamesFromJSON]];
+            [self reloadTableAsync];
             
             [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
             [_defaults setObject:@"YES" forKey:@"encodedUser"];
@@ -93,6 +131,7 @@
         });
     }
     
+    // Set the UI
     [self setUserItems];
 }
 
@@ -100,10 +139,29 @@
 {
     _usernameLabel.text = _user.playerName;
     _lastSeenLabel.text = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
-    _userImage.image    = _user.avatar;
+    
+    [self loadImageAsync:_userImage WithImage:_user.avatar];
+}
+
+// Load images on seperate UI thread
+// Makes them load waaay faster
+- (void)loadImageAsync:(UIImageView*)view
+             WithImage:(UIImage *)image
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        view.image    = image;
+    });
 }
 
 #pragma Game Table functions
+- (void)reloadTableAsync
+{
+    // Reload table Async, also for speed
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.gamesTable reloadData];
+    });
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -123,15 +181,32 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
     
-    STGame *game = (STGame *)[_user.recentGames objectAtIndex:indexPath.row];
+    STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
     cell.textLabel.text         = game.gameName;
     cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ uren gespeeld", game.playtimeTwoWeeks];
-    cell.imageView.image        = game.imgLogo;
+    [self loadImageAsync:cell.imageView WithImage:game.imgIcon];
     
     return cell;
 }
 
-#pragma NavigationBar
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"AchievementView" sender:game];
+}
+
+#pragma mark - Games Functions
+- (void)saveAchievementsForGames
+{
+    
+}
+
+#pragma mark - NavigationBar
+
+- (IBAction)updateDataClick:(id)sender {
+    [self updateData:_updateTimer];
+}
+
 - (IBAction)logoutUser:(id)sender
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -139,6 +214,13 @@
     [defaults synchronize];
     
     [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    STAchievementViewController *controller = (STAchievementViewController *)[segue destinationViewController];
+    STUserGame *game = (STUserGame *)sender;
+    controller.game = game;
 }
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "STApiService.h"
-#import "STUser.h"
 
 #define userApiString @"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%@"
 #define achievementsApiString @"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=%lu&key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@"
@@ -73,6 +72,26 @@
         if(error == nil) {
             for (NSDictionary *game in jsonDic[@"response"][@"games"]) {
                 STGame *sGame = [[STGame alloc] initWithDictionary:game];
+                [gamesArray addObject:sGame];
+            }
+        }
+    }
+    return gamesArray;
+}
+
+- (NSMutableArray *)getRecentPlayedGamesFromJSON
+{
+    NSData *jsonData    = nil;
+    NSMutableArray *gamesArray = [[NSMutableArray alloc] init];
+    
+    jsonData = [self callApiURL:_recentGamesApiURL];
+    if(jsonData != nil) {
+        NSError *error = nil;
+        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        
+        if(error == nil) {
+            for (NSDictionary *game in jsonDic[@"response"][@"games"]) {
+                STUserGame *sGame = [[STUserGame alloc] initWithDictionary:game];
                 [gamesArray addObject:sGame];
             }
         }
