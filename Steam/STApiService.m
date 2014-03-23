@@ -9,9 +9,12 @@
 #import "STApiService.h"
 
 #define userApiString @"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%@"
-#define achievementsApiString @"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=%lu&key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@"
-#define globalAchievementsApiString @"http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=%lu"
 #define recentGamesApiString @"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@"
+
+#pragma mark - Achievement URLS
+#define gameAchievements @"http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%@"
+#define globalPrecentage @"http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=%@"
+#define userAchievements @"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%1$@&steamid=%2$@"
 
 @interface STApiService ()
 
@@ -79,6 +82,85 @@
     return gamesArray;
 }
 
+- (NSMutableDictionary *)getGameAchievementsFromJSON:(NSString *)appID
+{
+    NSData *jsonData = nil;
+    NSMutableDictionary *achievementDict= [[NSMutableDictionary alloc] init];
+    
+    NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:gameAchievements, appID]];
+    jsonData = [self callApiURL:url];
+    if(jsonData != nil) {
+        NSError *error = nil;
+        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        
+        if(error == nil) {
+            for (NSDictionary *achievement in jsonDic[@"game"][@"availableGameStats"][@"achievements"]) {
+                STAchievement *ach = [[STAchievement alloc] initWithDictionary:achievement];
+                
+                [achievementDict setObject:ach forKey:achievement[@"name"]];
+            }
+        }
+    }
+    
+    return [self setGlobalPercentages:achievementDict ForApp:appID];
+}
+
+- (NSMutableDictionary *)setGlobalPercentages:(NSMutableDictionary *)achievements
+                                       ForApp:(NSString *)appID
+{
+    NSData *jsonData = nil;
+    
+    NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:globalPrecentage, appID]];
+    jsonData = [self callApiURL:url];
+    if(jsonData != nil) {
+        NSError *error = nil;
+        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        
+        if(error == nil) {
+            for (NSDictionary *achievement in jsonDic[@"achievementpercentages"][@"achievements"])
+            {
+                STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
+                
+                NSString *percent = achievement[@"percent"];
+                [ach setGlobalPercentage:[NSString stringWithFormat:@"%.1f",[percent doubleValue]]];
+            }
+        }
+    }
+    
+    return achievements;
+}
+
+- (int)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements
+                                                  ForApp:(NSString *)appID
+{
+    NSData *jsonData = nil;
+    int achievedAmount = 0;
+    
+    NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:userAchievements, appID, _userID]];
+    jsonData = [self callApiURL:url];
+    if(jsonData != nil) {
+        NSError *error = nil;
+        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        
+        if(error == nil) {
+            for (NSDictionary *achievement in jsonDic[@"playerstats"][@"achievements"])
+            {
+                STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
+                
+                NSString *achieved = achievement[@"achieved"];
+                if ([achieved intValue] == 1) {
+                    achieved = @"yes";
+                    achievedAmount++;
+                } else
+                    achieved = @"no";
+                        
+                [ach setUserAchieved:achieved];
+            }
+        }
+    }
+    return achievedAmount;
+}
+
 - (NSMutableArray *)getRecentPlayedGamesFromJSON
 {
     NSData *jsonData    = nil;
@@ -91,7 +173,7 @@
         
         if(error == nil) {
             for (NSDictionary *game in jsonDic[@"response"][@"games"]) {
-                STUserGame *sGame = [[STUserGame alloc] initWithDictionary:game];
+                STUserGame *sGame = [[STUserGame alloc] initWithDictionary:game AndUserID:_userID];
                 [gamesArray addObject:sGame];
             }
         }

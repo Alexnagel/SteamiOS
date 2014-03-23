@@ -12,6 +12,11 @@
 
 @property (readonly) NSString *playtimeTwoWeeks;
 @property (readonly) NSString *playtimeForever;
-@property (readonly) NSInteger *userAchievements;
+@property (nonatomic, readonly) int userAchievements;
+@property (readonly) NSString *userID;
 
+- (id)initWithDictionary:(NSDictionary *)jsonData
+               AndUserID:(NSString *)userID;
+- (NSString *)achievementsAchieved;
+- (void)setGameAchievements;
 @end

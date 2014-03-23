@@ -30,6 +30,7 @@
 		FA85D56D18D2F04B00C96A8E /* SteamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA85D56C18D2F04B00C96A8E /* SteamTests.m */; };
 		FADAD7C018DF0EF5006B10F9 /* STUserGame.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7BF18DF0EF5006B10F9 /* STUserGame.m */; };
 		FADAD7C318DF16C3006B10F9 /* STAchievement.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7C218DF16C3006B10F9 /* STAchievement.m */; };
+		FADAD7C918DF677A006B10F9 /* STAchievementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7C818DF677A006B10F9 /* STAchievementCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,8 @@
 		FADAD7BF18DF0EF5006B10F9 /* STUserGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STUserGame.m; sourceTree = "<group>"; };
 		FADAD7C118DF16C3006B10F9 /* STAchievement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STAchievement.h; sourceTree = "<group>"; };
 		FADAD7C218DF16C3006B10F9 /* STAchievement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STAchievement.m; sourceTree = "<group>"; };
+		FADAD7C718DF677A006B10F9 /* STAchievementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STAchievementCell.h; sourceTree = "<group>"; };
+		FADAD7C818DF677A006B10F9 /* STAchievementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STAchievementCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +137,8 @@
 			children = (
 				FA85D55018D2F04A00C96A8E /* Main_iPhone.storyboard */,
 				FA85D55318D2F04A00C96A8E /* Main_iPad.storyboard */,
+				FADAD7C718DF677A006B10F9 /* STAchievementCell.h */,
+				FADAD7C818DF677A006B10F9 /* STAchievementCell.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -335,6 +340,7 @@
 				FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */,
 				FADAD7C018DF0EF5006B10F9 /* STUserGame.m in Sources */,
 				FA85D54B18D2F04A00C96A8E /* main.m in Sources */,
+				FADAD7C918DF677A006B10F9 /* STAchievementCell.m in Sources */,
 				FA85D54F18D2F04A00C96A8E /* STAppDelegate.m in Sources */,
 				FA73CBC418DE16B300F00E64 /* STAchievementViewController.m in Sources */,
 				FA0BCE8E18DDCA18007C8D8D /* STGame.m in Sources */,

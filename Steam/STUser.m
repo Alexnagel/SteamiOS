@@ -54,6 +54,7 @@
 - (UIImage *)getImageFromURL:(NSString *)imageURL {
     UIImage *result;
     
+    // Get the image from the URL
     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]];
     result       = [UIImage imageWithData:data];
     
@@ -63,9 +64,11 @@
 - (NSString *)convertLastLogOff:(NSString *)lastLogOff {
     NSString *lastLogOffStr;
     
+    // Init date with the UTC timestamp
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[lastLogOff longLongValue]];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd MMM HH:mm"];
+    // Format the string to human readable string
     lastLogOffStr = [formatter stringFromDate:date];
     
     return lastLogOffStr;
@@ -73,6 +76,7 @@
 
 - (void)updateRecentGames:(NSMutableArray *)games
 {
+    // Replace the games array
     _recentGames = games;
 }
 

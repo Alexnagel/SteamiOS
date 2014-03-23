@@ -14,7 +14,7 @@
     NSString *_gameName;
     UIImage  *_imgLogo;
     UIImage  *_imgIcon;
-    NSMutableArray *_achievements;
+    NSMutableDictionary *_achievements;
     NSInteger *_achievementCount;
 }
 
@@ -26,6 +26,6 @@
 @property (readonly) UIImage  *imgIcon;
 @property (readonly) NSDate   *lastUpdated;
 
-@property (readonly) NSMutableArray *achievements;
+@property (readonly) NSMutableDictionary *achievements;
 @property (readonly) NSInteger *achievementCount;
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "STGame.h"
+#import "STApiService.h"
 
 #define GAMEID @"gameid"
 #define NAME   @"gamename"
@@ -18,6 +19,9 @@
 
 #define IMAGEURL @"http://media.steampowered.com/steamcommunity/public/images/apps/%1$@/%2$@.jpg"
 
+@interface STGame()
+@property (nonatomic, strong) NSString *achievementStr;
+@end
 
 @implementation STGame
 @synthesize gameID           = _gameID;
@@ -36,6 +40,9 @@
         _imgLogo            = [self getImageFromURL:jsonData[@"img_logo_url"]];
         _imgIcon            = [self getImageFromURL:jsonData[@"img_icon_url"]];
         _lastUpdated        = [[NSDate alloc]init];
+        
+        // Set the string for the achievements object key (Encoding)
+        _achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
     }
     return self;
 }
@@ -50,8 +57,8 @@
         _imgIcon            = [decoder decodeObjectForKey:GAMEICON];
         _lastUpdated        = [decoder decodeObjectForKey:LASTUPDATE];
         
-        NSString *achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
-        _achievements            = [decoder decodeObjectForKey:achievementStr];
+        _achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
+        _achievements   = [decoder decodeObjectForKey:_achievementStr];
     }
     return self;
 }
@@ -67,13 +74,25 @@
     return result;
 }
 
+- (void)setGameAchievements
+{
+    // Get the Achievements for a game
+    // do it async to unload main ui
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        STApiService *apiService = [[STApiService alloc] init];
+        _achievements = [apiService getGameAchievementsFromJSON:_gameID];
+        _achievementCount = (NSInteger *)[_achievements count];
+    });
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [encoder encodeObject:self.gameID forKey:GAMEID];
     [encoder encodeObject:self.gameName forKey:NAME];
     [encoder encodeObject:self.imgLogo forKey:GAMELOGO];
-    [encoder encodeObject:self.imgLogo forKey:GAMEICON];
+    [encoder encodeObject:self.imgIcon forKey:GAMEICON];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
+    [encoder encodeObject:self.achievements forKey:_achievementStr];
 }
 
 @end

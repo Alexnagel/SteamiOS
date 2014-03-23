@@ -10,6 +10,7 @@
 #import "STUser.h"
 #import "STGame.h"
 #import "STUserGame.h"
+#import "STAchievement.h"
 
 @interface STApiService : NSObject
 
@@ -17,5 +18,6 @@
 - (STUser *) getUserFromJSON;
 - (NSMutableArray *)getGamesFromJSON;
 - (NSMutableArray *)getRecentPlayedGamesFromJSON;
-
+- (NSMutableDictionary *)getGameAchievementsFromJSON:(NSString *)appID;
+- (int)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements ForApp:(NSString *)appID;
 @end

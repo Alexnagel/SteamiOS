@@ -74,6 +74,7 @@
         [iView stopAnimating];
         [iView removeFromSuperview];
     });
+    [self startUpdateTimer];
 }
 
 #pragma mark - Update Functions
@@ -221,6 +222,14 @@
     STAchievementViewController *controller = (STAchievementViewController *)[segue destinationViewController];
     STUserGame *game = (STUserGame *)sender;
     controller.game = game;
+    controller.achievementArray = [game.achievements allValues];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
+    [_defaults setObject:@"YES" forKey:@"encodedUser"];
+    [_defaults synchronize];
 }
 
 @end

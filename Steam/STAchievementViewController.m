@@ -7,9 +7,9 @@
 //
 
 #import "STAchievementViewController.h"
-#import "STGame.h"
 
-@interface STAchievementViewController ()
+@interface STAchievementViewController()
+@property (strong, nonatomic) IBOutlet UITableView *achievementTable;
 
 @end
 
@@ -34,6 +34,8 @@
 {
     [self.nameLabel setText:_game.gameName];
     [self.logoView setImage:_game.imgLogo];
+    [self.achievementLabel setText:_game.achievementsAchieved];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -48,5 +50,44 @@
     self.navigationItem.hidesBackButton = NO;
 }
 
+#pragma mark - TableView Functions
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [_game.achievements count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifier = @"AchievementCell";
+    STAchievementCell *cell       = [self.achievementTable dequeueReusableCellWithIdentifier:identifier];
+    
+    if (cell == nil) {
+        cell = [[STAchievementCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+    }
+    
+    STAchievement *achievement = [_achievementArray objectAtIndex:indexPath.row];
+    
+    cell.nameLabel.text = achievement.name;
+    cell.percentageLabel.text = [NSString stringWithFormat:@"%@%% van alle spelers",achievement.globalPercentage];
+    [self loadImageAsync:cell.iconView WithImage:[achievement getAchievementIcon]];
+
+    return cell;
+}
+
+// Load images on seperate UI thread
+// Makes them load waaay faster
+- (void)loadImageAsync:(UIImageView*)view
+             WithImage:(UIImage *)image
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        view.image    = image;
+    });
+}
 
 @end

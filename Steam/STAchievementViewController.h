@@ -7,11 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "STGame.h"
+#import "STUserGame.h"
+#import "STAchievementCell.h"
+#import "STAchievement.h"
 
-@interface STAchievementViewController : UIViewController
+@interface STAchievementViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (nonatomic, strong) STGame *game;
+@property (nonatomic, strong) STUserGame *game;
 @property (weak, nonatomic) IBOutlet UIImageView *logoView;
 @property (weak, nonatomic) IBOutlet UILabel *achievementLabel;
+@property (nonatomic, strong) NSArray *achievementArray;
 @end
