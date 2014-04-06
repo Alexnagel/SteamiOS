@@ -98,6 +98,11 @@
         // Update the user data
         [self setUser:[_apiService getUserFromJSON]];
         
+        // Set the UI
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setUserItems];
+        });
+        
         // Update recently played games data
         [_user updateRecentGames:[_apiService getRecentPlayedGamesFromJSON]];
         [self reloadTableAsync];
@@ -143,11 +148,48 @@
     });
 }
 
+- (void)updateUser
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setUserItems];
+        });
+    });
+}
+
 - (void)setUserItems
 {
     _usernameLabel.text = _user.playerName;
     _lastSeenLabel.text = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
     
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *lastSeenLabel = _lastSeenLabel.text;
+        
+        NSInteger onlineState = [[_apiService getUserStatus] integerValue];
+        switch (onlineState) {
+            case 1:
+                lastSeenLabel = @"Online"; break;
+            case 2:
+                lastSeenLabel = @"Busy"; break;
+            case 3:
+                lastSeenLabel = @"Away"; break;
+            case 4:
+                lastSeenLabel = @"Snooze"; break;
+            case 5:
+                lastSeenLabel = @"Looking to trade"; break;
+            case 6:
+                lastSeenLabel = @"looking to play"; break;
+                
+            default:
+                break;
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _lastSeenLabel.text = lastSeenLabel;
+        });
+    });
     [self loadImageAsync:_userImage WithImage:_user.avatar];
 }
 

@@ -57,6 +57,19 @@
     return user;
 }
 
+- (NSString *)getUserStatus
+{
+    NSDictionary *jsonData = nil;
+    
+    jsonData = [self callApiURL:_userApiURL];
+    if(jsonData != nil) {
+        NSDictionary *resJSON = jsonData[@"response"][@"players"][0];
+        return resJSON[@"personastate"];
+    }
+    
+    return @"";
+}
+
 - (NSMutableArray *)getGamesFromJSON
 {
     NSDictionary *jsonData    = nil;

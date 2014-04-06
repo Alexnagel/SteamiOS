@@ -21,10 +21,11 @@
 {
     if (self = [super init]) {
         // Init standard things
-        _steamID    = json[@"steamid"];
-        _playerName = json[@"personaname"];
-        _lastLogOff = [self convertLastLogOff:json[@"lastlogoff"]];
-        _avatar     = [self getImageFromURL:json[@"avatarfull"]];
+        _steamID     = json[@"steamid"];
+        _playerName  = json[@"personaname"];
+        _lastLogOff  = [self convertLastLogOff:json[@"lastlogoff"]];
+        _avatar      = [self getImageFromURL:json[@"avatarfull"]];
+        _onlineState = json[@"personastate"];
         
         // Capitalize first letter
         _playerName = [[[_playerName substringToIndex:1] uppercaseString]

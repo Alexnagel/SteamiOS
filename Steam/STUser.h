@@ -19,6 +19,7 @@
 @property (readonly) NSString *avatarUrl;
 @property (readonly) NSString *lastLogOff;
 @property (readonly) NSDate   *lastUpdated;
+@property (readonly) NSString *onlineState;
 
 @property (readonly) NSMutableArray *recentGames;
 
