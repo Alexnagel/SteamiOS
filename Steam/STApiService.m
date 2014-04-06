@@ -1,4 +1,4 @@
- //
+//
 //  STApiService.m
 //  Steam
 //
@@ -45,18 +45,13 @@
 
 - (STUser *) getUserFromJSON
 {
-    NSData *jsonData = nil;
-    STUser *user     = Nil;
+    NSDictionary *jsonData = nil;
+    STUser *user           = Nil;
     
     jsonData = [self callApiURL:_userApiURL];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            NSDictionary *resJSON = jsonDic[@"response"][@"players"][0];
-            user = [[STUser alloc] initWithJSONDictionary:resJSON];
-        }
+        NSDictionary *resJSON = jsonData[@"response"][@"players"][0];
+        user = [[STUser alloc] initWithJSONDictionary:resJSON];
     }
     
     return user;
@@ -64,19 +59,14 @@
 
 - (NSMutableArray *)getGamesFromJSON
 {
-    NSData *jsonData    = nil;
+    NSDictionary *jsonData    = nil;
     NSMutableArray *gamesArray = [[NSMutableArray alloc] init];
     
     jsonData = [self callApiURL:_recentGamesApiURL];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            for (NSDictionary *game in jsonDic[@"response"][@"games"]) {
-                STGame *sGame = [[STGame alloc] initWithDictionary:game];
-                [gamesArray addObject:sGame];
-            }
+        for (NSDictionary *game in jsonData[@"response"][@"games"]) {
+            STGame *sGame = [[STGame alloc] initWithDictionary:game];
+            [gamesArray addObject:sGame];
         }
     }
     return gamesArray;
@@ -84,21 +74,16 @@
 
 - (NSMutableDictionary *)getGameAchievementsFromJSON:(NSString *)appID
 {
-    NSData *jsonData = nil;
+    NSDictionary *jsonData = nil;
     NSMutableDictionary *achievementDict= [[NSMutableDictionary alloc] init];
     
     NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:gameAchievements, appID]];
     jsonData = [self callApiURL:url];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            for (NSDictionary *achievement in jsonDic[@"game"][@"availableGameStats"][@"achievements"]) {
-                STAchievement *ach = [[STAchievement alloc] initWithDictionary:achievement];
-                
-                [achievementDict setObject:ach forKey:achievement[@"name"]];
-            }
+        for (NSDictionary *achievement in jsonData[@"game"][@"availableGameStats"][@"achievements"]) {
+            STAchievement *ach = [[STAchievement alloc] initWithDictionary:achievement];
+            
+            [achievementDict setObject:ach forKey:achievement[@"name"]];
         }
     }
     
@@ -108,81 +93,64 @@
 - (NSMutableDictionary *)setGlobalPercentages:(NSMutableDictionary *)achievements
                                        ForApp:(NSString *)appID
 {
-    NSData *jsonData = nil;
+    NSDictionary *jsonData = nil;
     
     NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:globalPrecentage, appID]];
     jsonData = [self callApiURL:url];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            for (NSDictionary *achievement in jsonDic[@"achievementpercentages"][@"achievements"])
-            {
-                STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
-                
-                NSString *percent = achievement[@"percent"];
-                [ach setGlobalPercentage:[NSString stringWithFormat:@"%.1f",[percent doubleValue]]];
-            }
+        for (NSDictionary *achievement in jsonData[@"achievementpercentages"][@"achievements"]) {
+            STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
+            
+            NSString *percent = achievement[@"percent"];
+            [ach setGlobalPercentage:[NSString stringWithFormat:@"%.1f",[percent doubleValue]]];
         }
     }
     
     return achievements;
 }
 
-- (int)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements
-                                                  ForApp:(NSString *)appID
+- (NSString *)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements
+                                ForApp:(NSString *)appID
 {
-    NSData *jsonData = nil;
+    NSDictionary *jsonData = nil;
     int achievedAmount = 0;
     
     NSURL *url = [[NSURL alloc] initWithString:[NSString stringWithFormat:userAchievements, appID, _userID]];
     jsonData = [self callApiURL:url];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            for (NSDictionary *achievement in jsonDic[@"playerstats"][@"achievements"])
-            {
-                STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
-                
-                NSString *achieved = achievement[@"achieved"];
-                if ([achieved intValue] == 1) {
-                    achieved = @"yes";
-                    achievedAmount++;
-                } else
-                    achieved = @"no";
-                        
-                [ach setUserAchieved:achieved];
-            }
+        for (NSDictionary *achievement in jsonData[@"playerstats"][@"achievements"]) {
+            STAchievement *ach = [achievements objectForKey:achievement[@"apiname"]];
+            
+            NSString *achieved = achievement[@"achieved"];
+            if ([achieved intValue] == 1) {
+                achieved = @"yes";
+                achievedAmount++;
+            } else
+                achieved = @"no";
+            
+            [ach setUserAchieved:achieved];
         }
     }
-    return achievedAmount;
+    return [NSString stringWithFormat:@"%d", achievedAmount];
 }
 
 - (NSMutableArray *)getRecentPlayedGamesFromJSON
 {
-    NSData *jsonData    = nil;
+    NSDictionary *jsonData    = nil;
     NSMutableArray *gamesArray = [[NSMutableArray alloc] init];
     
     jsonData = [self callApiURL:_recentGamesApiURL];
     if(jsonData != nil) {
-        NSError *error = nil;
-        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        
-        if(error == nil) {
-            for (NSDictionary *game in jsonDic[@"response"][@"games"]) {
-                STUserGame *sGame = [[STUserGame alloc] initWithDictionary:game AndUserID:_userID];
-                [gamesArray addObject:sGame];
-            }
+        for (NSDictionary *game in jsonData[@"response"][@"games"]) {
+            STUserGame *sGame = [[STUserGame alloc] initWithDictionary:game AndUserID:_userID];
+            [gamesArray addObject:sGame];
         }
     }
     return gamesArray;
 }
 
 
-- (NSData *) callApiURL:(NSURL *)apiURL
+- (NSDictionary *)callApiURL:(NSURL *)apiURL
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:apiURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
     [request setHTTPMethod:@"GET"];
@@ -194,7 +162,15 @@
     
     data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     if(error == nil) {
-        return data;
+        if(data != nil) {
+            NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+            
+            if(error == nil) {
+                return jsonDic;
+            } else {
+                return nil;
+            }
+        }
     }
     return nil;
 }

@@ -19,5 +19,5 @@
 - (NSMutableArray *)getGamesFromJSON;
 - (NSMutableArray *)getRecentPlayedGamesFromJSON;
 - (NSMutableDictionary *)getGameAchievementsFromJSON:(NSString *)appID;
-- (int)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements ForApp:(NSString *)appID;
+- (NSString *)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements ForApp:(NSString *)appID;
 @end

@@ -71,8 +71,10 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self initUser];
         
-        [iView stopAnimating];
-        [iView removeFromSuperview];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [iView stopAnimating];
+            [iView removeFromSuperview];
+        });
     });
     [self startUpdateTimer];
 }
@@ -104,6 +106,9 @@
         [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
         [_defaults setObject:@"YES" forKey:@"encodedUser"];
         [_defaults synchronize];
+        
+        _updateData.title   = @"Update";
+        _updateData.enabled = YES;
     });
 }
 
@@ -133,7 +138,9 @@
     }
     
     // Set the UI
-    [self setUserItems];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setUserItems];
+    });
 }
 
 - (void)setUserItems
@@ -185,7 +192,11 @@
     STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
     cell.textLabel.text         = game.gameName;
     cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ uren gespeeld", game.playtimeTwoWeeks];
-    [self loadImageAsync:cell.imageView WithImage:game.imgIcon];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        cell.imageView.image    = game.imgIcon;
+        [cell setNeedsLayout];
+    });
     
     return cell;
 }
@@ -193,34 +204,74 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
-    [self performSegueWithIdentifier:@"AchievementView" sender:game];
+    
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.frame = CGRectMake(0, 0, 24, 24);
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryView = spinner;
+    [spinner startAnimating];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        if([game checkAchievements]) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
+                [_defaults setObject:@"YES" forKey:@"encodedUser"];
+                [_defaults synchronize];
+            });
+        }
+
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [spinner stopAnimating];
+            cell.accessoryView = nil;
+            
+            [self performSegueWithIdentifier:@"AchievementView" sender:game];
+        });
+    });
 }
 
-#pragma mark - Games Functions
-- (void)saveAchievementsForGames
-{
-    
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [_user.recentGames removeObjectAtIndex:indexPath.row];
+        [self reloadTableAsync];
+    }
 }
 
 #pragma mark - NavigationBar
 
 - (IBAction)updateDataClick:(id)sender {
+    _updateData.title   = @"Updating";
+    _updateData.enabled = NO;
     [self updateData:_updateTimer];
 }
 
 - (IBAction)logoutUser:(id)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:@"userID"];
-    [defaults synchronize];
-    
-    [self.navigationController popToRootViewControllerAnimated:NO];
+    UIAlertView *alert = [[UIAlertView alloc] init];
+    [alert setTitle:@"Uitloggen"];
+    [alert setMessage:@"Weet je zeker dat je wil uitloggen?"];
+    [alert setDelegate:self];
+    [alert addButtonWithTitle:@"Ja"];
+    [alert addButtonWithTitle:@"Nee"];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults removeObjectForKey:@"userID"];
+        [defaults synchronize];
+        
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     STAchievementViewController *controller = (STAchievementViewController *)[segue destinationViewController];
     STUserGame *game = (STUserGame *)sender;
+    
     controller.game = game;
     controller.achievementArray = [game.achievements allValues];
 }

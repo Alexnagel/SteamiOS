@@ -35,7 +35,7 @@
     [self.nameLabel setText:_game.gameName];
     [self.logoView setImage:_game.imgLogo];
     [self.achievementLabel setText:_game.achievementsAchieved];
-    
+    [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ uren totaal", _game.playtimeForever]];
 }
 
 - (void)didReceiveMemoryWarning

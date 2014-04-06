@@ -15,7 +15,8 @@
     UIImage  *_imgLogo;
     UIImage  *_imgIcon;
     NSMutableDictionary *_achievements;
-    NSInteger *_achievementCount;
+    NSString *_achievementCount;
+    NSDate *_lastUpdated;
 }
 
 - (id)initWithDictionary:(NSDictionary *)jsonData;
@@ -27,5 +28,5 @@
 @property (readonly) NSDate   *lastUpdated;
 
 @property (readonly) NSMutableDictionary *achievements;
-@property (readonly) NSInteger *achievementCount;
+@property (readonly) NSString *achievementCount;
 @end

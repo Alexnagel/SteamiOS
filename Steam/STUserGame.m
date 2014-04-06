@@ -11,6 +11,7 @@
 
 #define PLAYFOREVER @"playtimeforever"
 #define PLAYTWOWEEKS @"playtimetwoweeks"
+#define USERACHIEVED @"userachieved"
 
 // Subclass of STGame
 // UserGame has the user information in it too
@@ -25,8 +26,6 @@
         _playtimeTwoWeeks   = [self minutesToHours:jsonData[@"playtime_2weeks"]];
         _userID             = userID;
         _userAchievements   = 0;
-        
-        [self setGameAchievements];
     }
     return self;
 }
@@ -37,35 +36,45 @@
     {
         _playtimeForever    = [decoder decodeObjectForKey:PLAYFOREVER];
         _playtimeTwoWeeks   = [decoder decodeObjectForKey:PLAYTWOWEEKS];
-        _userAchievements   = 0;
+        _userAchievements   = [decoder decodeObjectForKey:USERACHIEVED];
     }
     return self;
 }
 
-- (void)setGameAchievements
+- (BOOL)checkAchievements
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        STApiService *apiService = [[STApiService alloc] initWithUserID:_userID];
-        
-        _achievements = [apiService getGameAchievementsFromJSON:_gameID];
-        _achievementCount = (NSInteger *)[_achievements count];
-        
-        _userAchievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID];
-    });
+    NSCalendar *sysCalendar = [NSCalendar currentCalendar];
+    
+    // Create the current date
+    NSDate *currentDate = [[NSDate alloc] init];
+    
+    // Get conversion to months, days, hours, minutes
+    unsigned int unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit;
+    
+    NSDateComponents *breakdownInfo = [sysCalendar components:unitFlags fromDate:currentDate toDate:_lastUpdated options:0];
+    
+    NSLog(@"%d", ([breakdownInfo minute] > 30));
+    if ( _achievements == nil || (([breakdownInfo minute] > 30) == 1)) {
+        [self setGameAchievements];
+        return YES;
+    }
+    return NO;
 }
 
-- (void)setUserGameAchievements:(NSString *)userID
+- (void)setGameAchievements
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-       // STApiService *apiService = [[STApiService alloc] initWithUserID:userID];
+    STApiService *apiService = [[STApiService alloc] initWithUserID:_userID];
         
-//        _achievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID UserAchievedAmount:&_userAchievements];
-    });
+    _achievements = [apiService getGameAchievementsFromJSON:_gameID];
+    _achievementCount = [NSString stringWithFormat:@"%d",[_achievements count]];
+    
+    _userAchievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID];
+    _lastUpdated = [[NSDate alloc] init];
 }
 
 - (NSString *)achievementsAchieved
 {
-    return [NSString stringWithFormat:@"%1$zd/%2$zd Achievements", _userAchievements, _achievementCount];
+    return [NSString stringWithFormat:@"%1$@/%2$@ Achievements", _userAchievements, _achievementCount];
 }
 
 - (NSString *)minutesToHours:(NSString *)minutes
@@ -79,6 +88,7 @@
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.playtimeForever forKey:PLAYFOREVER];
     [encoder encodeObject:self.playtimeTwoWeeks forKey:PLAYTWOWEEKS];
+    [encoder encodeObject:self.userAchievements forKey:USERACHIEVED];
 }
 
 @end

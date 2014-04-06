@@ -16,6 +16,7 @@
 #define GAMELOGO @"gamelogo"
 #define LASTUPDATE @"lastupdated"
 #define GAMEICON @"gameicon"
+#define ACHIEVEMENTCOUNT @"achievementcount"
 
 #define IMAGEURL @"http://media.steampowered.com/steamcommunity/public/images/apps/%1$@/%2$@.jpg"
 
@@ -30,6 +31,7 @@
 @synthesize imgIcon          = _imgIcon;
 @synthesize achievements     = _achievements;
 @synthesize achievementCount = _achievementCount;
+@synthesize lastUpdated      = _lastUpdated;
 
 - (id)initWithDictionary:(NSDictionary *)jsonData
 {
@@ -42,7 +44,7 @@
         _lastUpdated        = [[NSDate alloc]init];
         
         // Set the string for the achievements object key (Encoding)
-        _achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
+        _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
     }
     return self;
 }
@@ -57,8 +59,9 @@
         _imgIcon            = [decoder decodeObjectForKey:GAMEICON];
         _lastUpdated        = [decoder decodeObjectForKey:LASTUPDATE];
         
-        _achievementStr = [NSString stringWithFormat:@"achievements_%@",_gameID];
-        _achievements   = [decoder decodeObjectForKey:_achievementStr];
+        _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
+        _achievements       = [decoder decodeObjectForKey:_achievementStr];
+        _achievementCount   = [decoder decodeObjectForKey:ACHIEVEMENTCOUNT];
     }
     return self;
 }
@@ -81,7 +84,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         STApiService *apiService = [[STApiService alloc] init];
         _achievements = [apiService getGameAchievementsFromJSON:_gameID];
-        _achievementCount = (NSInteger *)[_achievements count];
+        _achievementCount = [NSString stringWithFormat:@"%d",[_achievements count]];
     });
 }
 
@@ -93,6 +96,7 @@
     [encoder encodeObject:self.imgIcon forKey:GAMEICON];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
     [encoder encodeObject:self.achievements forKey:_achievementStr];
+    [encoder encodeObject:self.achievementCount forKey:ACHIEVEMENTCOUNT];
 }
 
 @end

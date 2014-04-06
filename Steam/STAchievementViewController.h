@@ -18,4 +18,5 @@
 @property (weak, nonatomic) IBOutlet UIImageView *logoView;
 @property (weak, nonatomic) IBOutlet UILabel *achievementLabel;
 @property (nonatomic, strong) NSArray *achievementArray;
+@property (strong, nonatomic) IBOutlet UILabel *totalPlayedLabel;
 @end
