@@ -74,7 +74,6 @@
     STAchievement *achievement = [_achievementArray objectAtIndex:indexPath.row];
     
     cell.nameLabel.text = achievement.name;
-    NSLog(@"%@", achievement.description);
     cell.descriptionLabel.text = achievement.description;
     cell.descriptionLabel.numberOfLines = 0;
     cell.descriptionLabel.lineBreakMode = NSLineBreakByTruncatingTail;

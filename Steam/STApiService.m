@@ -180,18 +180,15 @@
         }
     }
     
-/*    NSLog(@"original %@", gamesArray);
+    // Sort array on gameName
+    NSArray *sortedArray;
+    sortedArray = [gamesArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSString *first = [(STUserGame*)a gameName];
+        NSString *second = [(STUserGame*)b gameName];
+        return [first compare:second];
+    }];
     
-    NSSortDescriptor *sortDescriptor;
-    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"gamename" ascending:YES];
-    
-    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-    //NSMutableArray *sortedArray;
-    //sortedArray = [gamesArray sortedArrayUsingDescriptors:sortDescriptors];
-    [gamesArray sortUsingDescriptors:(sortDescriptors)];
-    NSLog(@"sorted %@", gamesArray);
-*/
-    return gamesArray;
+    return [NSMutableArray arrayWithArray:sortedArray];
 }
 
 
