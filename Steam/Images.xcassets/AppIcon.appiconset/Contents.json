@@ -6,15 +6,14 @@
       "scale" : "2x"
     },
     {
-      "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "steam_big.png",
+      "size" : "40x40",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "steam_big-1.png",
+      "filename" : "default_iphone@2x.png",
       "scale" : "2x"
     },
     {
@@ -40,13 +39,13 @@
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "steam_ipad-1.png",
+      "filename" : "default_ipad.png",
       "scale" : "1x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "steam_ipad.png",
+      "filename" : "default_ipad@2x.png",
       "scale" : "2x"
     }
   ],
