@@ -28,6 +28,7 @@
 		FA85D56318D2F04B00C96A8E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85D54218D2F04A00C96A8E /* UIKit.framework */; };
 		FA85D56B18D2F04B00C96A8E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA85D56918D2F04B00C96A8E /* InfoPlist.strings */; };
 		FA85D56D18D2F04B00C96A8E /* SteamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA85D56C18D2F04B00C96A8E /* SteamTests.m */; };
+		FA8B90D418F1FD2700D1CC3A /* STDataService.m in Sources */ = {isa = PBXBuildFile; fileRef = FA8B90D318F1FD2700D1CC3A /* STDataService.m */; };
 		FADAD7C018DF0EF5006B10F9 /* STUserGame.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7BF18DF0EF5006B10F9 /* STUserGame.m */; };
 		FADAD7C318DF16C3006B10F9 /* STAchievement.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7C218DF16C3006B10F9 /* STAchievement.m */; };
 		FADAD7C918DF677A006B10F9 /* STAchievementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FADAD7C818DF677A006B10F9 /* STAchievementCell.m */; };
@@ -76,6 +77,8 @@
 		FA85D56818D2F04B00C96A8E /* SteamTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SteamTests-Info.plist"; sourceTree = "<group>"; };
 		FA85D56A18D2F04B00C96A8E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FA85D56C18D2F04B00C96A8E /* SteamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SteamTests.m; sourceTree = "<group>"; };
+		FA8B90D218F1FD2700D1CC3A /* STDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STDataService.h; sourceTree = "<group>"; };
+		FA8B90D318F1FD2700D1CC3A /* STDataService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STDataService.m; sourceTree = "<group>"; };
 		FADAD7BE18DF0EF5006B10F9 /* STUserGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STUserGame.h; sourceTree = "<group>"; };
 		FADAD7BF18DF0EF5006B10F9 /* STUserGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STUserGame.m; sourceTree = "<group>"; };
 		FADAD7C118DF16C3006B10F9 /* STAchievement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STAchievement.h; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 			children = (
 				EF8CF50318DC73E80007D85C /* STApiService.h */,
 				EF8CF50418DC73E80007D85C /* STApiService.m */,
+				FA8B90D218F1FD2700D1CC3A /* STDataService.h */,
+				FA8B90D318F1FD2700D1CC3A /* STDataService.m */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -335,6 +340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA85D55818D2F04A00C96A8E /* STViewController.m in Sources */,
+				FA8B90D418F1FD2700D1CC3A /* STDataService.m in Sources */,
 				FA2BF5A218D9EC7F00E64C14 /* STNavigationViewController.m in Sources */,
 				FADAD7C318DF16C3006B10F9 /* STAchievement.m in Sources */,
 				FA2BF59F18D9EB5100E64C14 /* STUser.m in Sources */,
@@ -484,8 +490,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Steam/Steam-Prefix.pch";
 				INFOPLIST_FILE = "Steam/Steam-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -499,8 +506,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Steam/Steam-Prefix.pch";
 				INFOPLIST_FILE = "Steam/Steam-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIWebView *loginWebView;
 @property (strong, nonatomic) NSString *loginURL;
 @property (nonatomic) BOOL viewPushed;
+@property (strong, nonatomic) IBOutlet UIButton *refreshPage;
 @end
 
 @implementation STViewController
@@ -38,6 +39,11 @@
     [_loadingIndicator startAnimating];
     
     [self.loginWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_loginURL]]];
+}
+
+- (IBAction)refreshPage:(id)sender
+{
+    [self.loginWebView reload];
 }
 
 - (NSString*)getUserIDFromCookie {

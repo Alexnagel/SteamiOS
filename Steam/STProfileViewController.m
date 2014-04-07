@@ -10,6 +10,7 @@
 #import "STApiService.h"
 #import "STUser.h"
 #import "STAchievementViewController.h"
+#import "STDataService.h"
 
 #define USER_FILE @"user.txt"
 
@@ -17,6 +18,8 @@
 @property (nonatomic, weak) IBOutlet UIButton *logoutButton;
 @property (nonatomic, strong) STUser *user;
 @property (nonatomic, strong) STApiService *apiService;
+@property (nonatomic, strong) STDataService *dataService;
+
 
 @property (nonatomic, strong) NSUserDefaults *defaults;
 @property (nonatomic, strong) NSString *userFile;
@@ -28,15 +31,7 @@
 @end
 
 @implementation STProfileViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+@synthesize dataService = _dataService;
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -49,10 +44,7 @@
 {
     [super viewDidLoad];
     
-    // Set userFile
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    _userFile = [documentsDirectory stringByAppendingPathComponent:USER_FILE];
+    _dataService = [[STDataService alloc] init];
     
     // Set the UserDefaults and load the UserID
     _defaults = [NSUserDefaults standardUserDefaults];
@@ -108,9 +100,7 @@
         [self reloadTableAsync];
         
         // Save the updated data
-        [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
-        [_defaults setObject:@"YES" forKey:@"encodedUser"];
-        [_defaults synchronize];
+        [_dataService saveUser:_user];
         
         _updateData.title   = @"Update";
         _updateData.enabled = YES;
@@ -124,7 +114,7 @@
     // Check if user has been saved already
     // if so load from memory
     if ([_defaults objectForKey:@"encodedUser"] != nil) {
-        _user = (STUser *)[NSKeyedUnarchiver unarchiveObjectWithFile:_userFile];
+        _user = [_dataService getUserFromUnarchiver];
         [self reloadTableAsync];
         
     } else {
@@ -136,9 +126,7 @@
             [_user updateRecentGames:[_apiService getRecentPlayedGamesFromJSON]];
             [self reloadTableAsync];
             
-            [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
-            [_defaults setObject:@"YES" forKey:@"encodedUser"];
-            [_defaults synchronize];
+            [_dataService saveUser:_user];
         });
     }
     
@@ -148,22 +136,17 @@
     });
 }
 
-- (void)updateUser
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setUserItems];
-        });
-    });
-}
-
 - (void)setUserItems
 {
     _usernameLabel.text = _user.playerName;
     _lastSeenLabel.text = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
+    [self updateUserStatus];
     
+    [self loadImageAsync:_userImage WithImage:_user.avatar];
+}
+
+- (void)updateUserStatus
+{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *lastSeenLabel = _lastSeenLabel.text;
         
@@ -187,10 +170,11 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            _lastSeenLabel.text = lastSeenLabel;
+            if (![lastSeenLabel isEqualToString:_lastSeenLabel.text]){
+                _lastSeenLabel.text = lastSeenLabel;
+            }
         });
     });
-    [self loadImageAsync:_userImage WithImage:_user.avatar];
 }
 
 // Load images on seperate UI thread
@@ -301,10 +285,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults removeObjectForKey:@"userID"];
-        [defaults synchronize];
-        
+        [_dataService logoutUser];
         [self.navigationController popToRootViewControllerAnimated:NO];
     }
 }
@@ -320,9 +301,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
-    [_defaults setObject:@"YES" forKey:@"encodedUser"];
-    [_defaults synchronize];
+    [_dataService saveUser:_user];
 }
 
 @end
