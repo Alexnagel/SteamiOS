@@ -28,6 +28,8 @@
 
 @property (nonatomic, strong) NSTimer *updateTimer;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *updateData;
+
+@property (nonatomic) BOOL rowLoading;
 @end
 
 @implementation STProfileViewController
@@ -68,6 +70,8 @@
             [iView removeFromSuperview];
         });
     });
+    
+    _rowLoading = NO;
     [self startUpdateTimer];
 }
 
@@ -229,30 +233,34 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
-    
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.frame = CGRectMake(0, 0, 24, 24);
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.accessoryView = spinner;
-    [spinner startAnimating];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        if([game checkAchievements]) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [NSKeyedArchiver archiveRootObject:_user toFile:_userFile];
-                [_defaults setObject:@"YES" forKey:@"encodedUser"];
-                [_defaults synchronize];
-            });
-        }
-
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [spinner stopAnimating];
-            cell.accessoryView = nil;
+    if (_rowLoading == NO) {
+        // Set rowloading to YES
+        _rowLoading = YES;
+        
+        STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
+        
+        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        spinner.frame = CGRectMake(0, 0, 24, 24);
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView = spinner;
+        [spinner startAnimating];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            if([game checkAchievements]) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [_dataService saveUser:_user];
+                });
+            }
             
-            [self performSegueWithIdentifier:@"AchievementView" sender:game];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [spinner stopAnimating];
+                cell.accessoryView = nil;
+                
+                _rowLoading = NO;
+                [self performSegueWithIdentifier:@"AchievementView" sender:game];
+            });
         });
-    });
+    }
 }
 
 // Override to support editing the table view.
