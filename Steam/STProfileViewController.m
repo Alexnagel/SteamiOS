@@ -102,6 +102,11 @@
         // Update recently played games data
         [_user updateRecentGames:[_apiService getRecentPlayedGamesFromJSON]];
         [self reloadTableAsync];
+        // Update hours played
+        [_user updateHoursPlayed];
+        _recentHoursLabel.text = [NSString stringWithFormat:@"%@ hours past 2 weeks", _user.recentHours];
+        _totalHoursLabel.text = [NSString stringWithFormat:@"%@ hours on record", _user.totalHours];
+;
         
         // Save the updated data
         [_dataService saveUser:_user];
@@ -144,6 +149,8 @@
 {
     _usernameLabel.text = _user.playerName;
     _lastSeenLabel.text = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
+    _recentHoursLabel.text = [NSString stringWithFormat:@"%@ hours past 2 weeks", /*(_user.recentHours == nil) ? @"0.0" : */_user.recentHours ];
+    _totalHoursLabel.text = [NSString stringWithFormat:@"%@ hours on record", /*(_user.totalHours == nil) ? @"0.0" : */_user.totalHours];
     [self updateUserStatus];
     
     [self loadImageAsync:_userImage WithImage:_user.avatar];
@@ -221,7 +228,8 @@
     
     STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
     cell.textLabel.text         = game.gameName;
-    cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ hours past two weeks", game.playtimeTwoWeeks];
+    
+    cell.detailTextLabel.text   = ([game.playtimeTwoWeeks floatValue] > 0) ? [NSString stringWithFormat:@"%@ hrs past 2 weeks / %.1f hrs on record", game.playtimeTwoWeeks, [game.playtimeForever floatValue]] : [NSString stringWithFormat:@"%.1f hrs on record", [game.playtimeForever floatValue]] ;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         cell.imageView.image    = game.imgIcon;

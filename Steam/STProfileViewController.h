@@ -12,6 +12,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastSeenLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *userImage;
+@property (weak, nonatomic) IBOutlet UILabel *recentHoursLabel;
+@property (weak, nonatomic) IBOutlet UILabel *totalHoursLabel;
 @property (weak, nonatomic) IBOutlet UITableView *gamesTable;
 
 @end

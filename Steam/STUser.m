@@ -14,6 +14,8 @@
 #define AVATAR @"avatar"
 #define LASTUPDATE @"lastupdated"
 #define RECENTGAMES @"recentgames"
+#define RECENTHOURS @"recenthours"
+#define TOTALHOURS @"totalhours"
 
 @implementation STUser
 
@@ -46,7 +48,8 @@
         _lastLogOff     = [decoder decodeObjectForKey:LASTSEEN];
         _avatar         = [decoder decodeObjectForKey:AVATAR];
         _recentGames    = [decoder decodeObjectForKey:RECENTGAMES];
-        
+        _recentHours    = [decoder decodeObjectForKey:RECENTHOURS];
+        _totalHours     = [decoder decodeObjectForKey:TOTALHOURS];
         _lastUpdated    = [decoder decodeObjectForKey:LASTUPDATE];
     }
     return self;
@@ -79,6 +82,19 @@
 {
     // Replace the games array
     _recentGames = games;
+    
+}
+
+- (void)updateHoursPlayed{
+    float sumRecent = 0;
+    float sumTotal = 0;
+    for (STUserGame * g in _recentGames)
+    {
+        sumRecent += [g.playtimeTwoWeeks floatValue];
+        sumTotal += [g.playtimeForever floatValue];
+    }
+    _recentHours = [NSString stringWithFormat:@"%.1f", sumRecent];
+    _totalHours = [NSString stringWithFormat:@"%.1f", sumTotal];
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
@@ -88,6 +104,8 @@
     [encoder encodeObject:self.lastLogOff forKey:LASTSEEN];
     [encoder encodeObject:self.avatar forKey:AVATAR];
     [encoder encodeObject:self.recentGames forKey:RECENTGAMES];
+    [encoder encodeObject:self.recentHours forKey:RECENTHOURS];
+    [encoder encodeObject:self.totalHours forKey:TOTALHOURS];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
 }
 

@@ -35,7 +35,7 @@
     [self.nameLabel setText:_game.gameName];
     [self.logoView setImage:_game.imgLogo];
     [self.achievementLabel setText:_game.achievementsAchieved];
-    [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ hours on record", _game.playtimeForever]];
+    [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ hrs on record", _game.playtimeForever]];
 }
 
 - (void)didReceiveMemoryWarning

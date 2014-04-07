@@ -10,7 +10,7 @@
 
 #define userApiString @"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%@"
 #define recentGamesApiString @"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@"
-
+#define ownedGamesApiString @"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@&include_appinfo=1&include_played_free_games=1&format=json"
 #pragma mark - Achievement URLS
 #define gameAchievements @"http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%@&l=english&format=json"
 #define globalPrecentage @"http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=%@"
@@ -35,7 +35,7 @@
         // Init user URL
         NSString *userURL = [NSString stringWithFormat:userApiString, userID];
         // Init recent games URL
-        NSString *recentGamesURL = [NSString stringWithFormat:recentGamesApiString,userID];
+        NSString *recentGamesURL = [NSString stringWithFormat:ownedGamesApiString,userID];
         
         [self setUserApiURL:[NSURL URLWithString:userURL]];
         [self setRecentGamesApiURL:[NSURL URLWithString:recentGamesURL]];
@@ -180,7 +180,7 @@
         }
     }
     
-    // Sort array on gameName
+    // Sort array on total hours played
     NSArray *sortedArray;
     sortedArray = [gamesArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSString *first = [(STUserGame*)a gameName];
