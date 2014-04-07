@@ -167,7 +167,7 @@
             case 5:
                 lastSeenLabel = @"Looking to trade"; break;
             case 6:
-                lastSeenLabel = @"looking to play"; break;
+                lastSeenLabel = @"Looking to play"; break;
                 
             default:
                 break;
@@ -221,7 +221,7 @@
     
     STUserGame *game = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
     cell.textLabel.text         = game.gameName;
-    cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ uren gespeeld", game.playtimeTwoWeeks];
+    cell.detailTextLabel.text   = [NSString stringWithFormat:@"%@ hours past two weeks", game.playtimeTwoWeeks];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         cell.imageView.image    = game.imgIcon;
@@ -282,11 +282,11 @@
 - (IBAction)logoutUser:(id)sender
 {
     UIAlertView *alert = [[UIAlertView alloc] init];
-    [alert setTitle:@"Uitloggen"];
-    [alert setMessage:@"Weet je zeker dat je wil uitloggen?"];
+    [alert setTitle:@"Log out"];
+    [alert setMessage:@"Are you sure you want to log out?"];
     [alert setDelegate:self];
-    [alert addButtonWithTitle:@"Ja"];
-    [alert addButtonWithTitle:@"Nee"];
+    [alert addButtonWithTitle:@"Yes"];
+    [alert addButtonWithTitle:@"No"];
     [alert show];
 }
 

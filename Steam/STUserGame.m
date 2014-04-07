@@ -5,7 +5,7 @@
 //  Created by Alex Nagelkerke on 23-03-14.
 //  Copyright (c) 2014 Alex Nagelkerke. All rights reserved.
 //
-
+#include <math.h>
 #import "STUserGame.h"
 #import "STApiService.h"
 
@@ -66,7 +66,7 @@
     STApiService *apiService = [[STApiService alloc] initWithUserID:_userID];
         
     _achievements = [apiService getGameAchievementsFromJSON:_gameID];
-    _achievementCount = [NSString stringWithFormat:@"%d",[_achievements count]];
+    _achievementCount = [NSString stringWithFormat:@"%lu",(unsigned long)[_achievements count]];
     
     _userAchievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID];
     _lastUpdated = [[NSDate alloc] init];
@@ -74,13 +74,15 @@
 
 - (NSString *)achievementsAchieved
 {
-    return [NSString stringWithFormat:@"%1$@/%2$@ Achievements", _userAchievements, _achievementCount];
+    float percentage = (100 * [_userAchievements doubleValue])/[_achievementCount doubleValue];
+    if (isnan(percentage)) {percentage=100;}
+    return [NSString stringWithFormat:@"%@ of %@ (%.f%%)", _userAchievements, _achievementCount, percentage];
 }
 
 - (NSString *)minutesToHours:(NSString *)minutes
 {
-    double uur = [minutes doubleValue] / 60;
-    return [NSString stringWithFormat:@"%.2f", uur];
+    double hours = [minutes doubleValue] / 60;
+    return [NSString stringWithFormat:@"%.2f", hours];
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder

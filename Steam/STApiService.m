@@ -12,7 +12,7 @@
 #define recentGamesApiString @"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%@"
 
 #pragma mark - Achievement URLS
-#define gameAchievements @"http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%@"
+#define gameAchievements @"http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%@&l=english&format=json"
 #define globalPrecentage @"http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=%@"
 #define userAchievements @"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%1$@&steamid=%2$@"
 
@@ -115,10 +115,30 @@
             STAchievement *ach = [achievements objectForKey:achievement[@"name"]];
             
             NSString *percent = achievement[@"percent"];
-            [ach setGlobalPercentage:[NSString stringWithFormat:@"%.1f",[percent doubleValue]]];
+            [ach setGlobalPercentage:[NSString stringWithFormat:@"%.2f",[percent doubleValue]]];
         }
     }
     
+    /*NSSortDescriptor *sortDescriptor;
+    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"globalpercentage" ascending:YES];
+    
+    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+    NSArray *sortedArray;
+    sortedArray = [achievements sortedArrayUsingDescriptors:sortDescriptors];
+    */
+    
+    /*NSArray *sortedKeys = [achievements keysSortedByValueUsingComparator: ^(id obj1, id obj2){
+        if ([obj1 doubleValue] > [obj2 doubleValue])
+            return (NSComparisonResult)NSOrderedDescending;
+        if ([obj1 doubleValue] < [obj2 doubleValue])
+            return (NSComparisonResult)NSOrderedAscending;
+        return (NSComparisonResult)NSOrderedSame;
+    }];
+    
+    NSArray *sortedValues = [[achievements allValues]sortedArrayUsingSelector:@selector(compare:)];
+    for (int s = ([sortedValues count]-1); s >= 0; s--) {
+        NSLog(@" %@ = %@",[sortedKeys objectAtIndex:s],[sortedValues objectAtIndex:s]);
+    }*/
     return achievements;
 }
 
@@ -159,6 +179,18 @@
             [gamesArray addObject:sGame];
         }
     }
+    
+/*    NSLog(@"original %@", gamesArray);
+    
+    NSSortDescriptor *sortDescriptor;
+    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"gamename" ascending:YES];
+    
+    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+    //NSMutableArray *sortedArray;
+    //sortedArray = [gamesArray sortedArrayUsingDescriptors:sortDescriptors];
+    [gamesArray sortUsingDescriptors:(sortDescriptors)];
+    NSLog(@"sorted %@", gamesArray);
+*/
     return gamesArray;
 }
 

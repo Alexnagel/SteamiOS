@@ -84,7 +84,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         STApiService *apiService = [[STApiService alloc] init];
         _achievements = [apiService getGameAchievementsFromJSON:_gameID];
-        _achievementCount = [NSString stringWithFormat:@"%d",[_achievements count]];
+        _achievementCount = [NSString stringWithFormat:@"%lu",(unsigned long)[_achievements count]];
     });
 }
 

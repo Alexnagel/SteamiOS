@@ -35,7 +35,7 @@
     [self.nameLabel setText:_game.gameName];
     [self.logoView setImage:_game.imgLogo];
     [self.achievementLabel setText:_game.achievementsAchieved];
-    [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ uren totaal", _game.playtimeForever]];
+    [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ hours on record", _game.playtimeForever]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,7 +74,11 @@
     STAchievement *achievement = [_achievementArray objectAtIndex:indexPath.row];
     
     cell.nameLabel.text = achievement.name;
-    cell.percentageLabel.text = [NSString stringWithFormat:@"%@%% van alle spelers",achievement.globalPercentage];
+    NSLog(@"%@", achievement.description);
+    cell.descriptionLabel.text = achievement.description;
+    cell.descriptionLabel.numberOfLines = 0;
+    cell.descriptionLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    cell.percentageLabel.text = [NSString stringWithFormat:@"%@%% of all players",achievement.globalPercentage];
     [self loadImageAsync:cell.iconView WithImage:[achievement getAchievementIcon]];
 
     return cell;

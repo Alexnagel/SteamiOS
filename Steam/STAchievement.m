@@ -10,6 +10,7 @@
 
 #define APINAME @"apiname"
 #define NAME @"name"
+#define DESCRIPTION @"description"
 #define ISHIDDEN @"hidden"
 #define ICONACH @"iconachieved"
 #define ICON @"icon"
@@ -29,6 +30,7 @@
         _apiName        = dictionary[@"name"];
         _name           = dictionary[@"displayName"];
         _isHidden       = dictionary[@"hidden"];
+        _description    = (dictionary[@"description"] == nil) ? @"Secret" : dictionary[@"description"];
         _iconAchieved   = [self getImageFromURL:dictionary[@"icon"]];
         _icon           = [self getImageFromURL:dictionary[@"icongray"]];
     }
@@ -44,6 +46,7 @@
         _iconAchieved       = [decoder decodeObjectForKey:ICONACH];
         _icon               = [decoder decodeObjectForKey:ICON];
         _userAchieved       = [decoder decodeObjectForKey:USERACHIEVED];
+        _description        = [decoder decodeObjectForKey:DESCRIPTION];
         _globalPercentage   = [decoder decodeObjectForKey:GLOBALPERC];
         
         if (_userAchieved == nil)
@@ -87,6 +90,7 @@
     [encoder encodeObject:self.iconAchieved forKey:ICONACH];
     [encoder encodeObject:self.icon forKey:ICON];
     [encoder encodeObject:self.userAchieved forKey:USERACHIEVED];
+    [encoder encodeObject:self.description forKey:DESCRIPTION];
     [encoder encodeObject:self.globalPercentage forKey:GLOBALPERC];
 }
 

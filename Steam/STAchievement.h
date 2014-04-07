@@ -17,6 +17,7 @@
 
 @property (readonly) NSString *apiName;
 @property (readonly) NSString *name;
+@property (readonly) NSString *description;
 @property (readonly) NSString *isHidden;
 @property (readonly) UIImage  *iconAchieved;
 @property (readonly) UIImage  *icon;
