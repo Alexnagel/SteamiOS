@@ -180,7 +180,7 @@
         }
     }
     
-    // Sort array on total hours played
+    // Sort array on gameName
     NSArray *sortedArray;
     sortedArray = [gamesArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSString *first = [(STUserGame*)a gameName];
