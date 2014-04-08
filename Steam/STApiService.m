@@ -70,6 +70,19 @@
     return @"";
 }
 
+- (NSString *)getCurrentGame
+{
+    NSDictionary *jsonData = nil;
+    
+    jsonData = [self callApiURL:_userApiURL];
+    if(jsonData != nil) {
+        NSDictionary *resJSON = jsonData[@"response"][@"players"][0];
+        return (resJSON[@"gameextrainfo"] != nil) ? resJSON[@"gameextrainfo"] : @"";
+    }
+    
+    return @"";
+}
+
 - (NSMutableArray *)getGamesFromJSON
 {
     NSDictionary *jsonData    = nil;
@@ -119,27 +132,6 @@
             [ach setGlobalPercentage:[NSString stringWithFormat:@"%.2f",[percent doubleValue]]];
         }
     }
-    
-    /*NSSortDescriptor *sortDescriptor;
-    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"globalpercentage" ascending:YES];
-    
-    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-    NSArray *sortedArray;
-    sortedArray = [achievements sortedArrayUsingDescriptors:sortDescriptors];
-    */
-    
-    /*NSArray *sortedKeys = [achievements keysSortedByValueUsingComparator: ^(id obj1, id obj2){
-        if ([obj1 doubleValue] > [obj2 doubleValue])
-            return (NSComparisonResult)NSOrderedDescending;
-        if ([obj1 doubleValue] < [obj2 doubleValue])
-            return (NSComparisonResult)NSOrderedAscending;
-        return (NSComparisonResult)NSOrderedSame;
-    }];
-    
-    NSArray *sortedValues = [[achievements allValues]sortedArrayUsingSelector:@selector(compare:)];
-    for (int s = ([sortedValues count]-1); s >= 0; s--) {
-        NSLog(@" %@ = %@",[sortedKeys objectAtIndex:s],[sortedValues objectAtIndex:s]);
-    }*/
 }
 
 - (NSString *)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements

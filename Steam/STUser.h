@@ -26,5 +26,6 @@
 @property (readonly) NSString *recentHours;
 @property (readonly) NSString *totalHours;
 @property (readonly) NSMutableArray *recentGames;
+@property (readonly) NSString *currentGame;
 
 @end

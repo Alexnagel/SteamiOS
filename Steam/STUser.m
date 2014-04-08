@@ -16,6 +16,7 @@
 #define RECENTGAMES @"recentgames"
 #define RECENTHOURS @"recenthours"
 #define TOTALHOURS @"totalhours"
+#define CURRENTGAME @"currentgame"
 
 @implementation STUser
 
@@ -28,11 +29,7 @@
         _lastLogOff  = [self convertLastLogOff:json[@"lastlogoff"]];
         _avatar      = [self getImageFromURL:json[@"avatarfull"]];
         _onlineState = json[@"personastate"];
-        
-        // Capitalize first letter
-        _playerName = [[[_playerName substringToIndex:1] uppercaseString]
-                       stringByAppendingString:[_playerName substringFromIndex:1]];
-        
+        _currentGame = json[@"gameextrainfo"];
         // Save last updated
         _lastUpdated = [[NSDate alloc] init];
     }
@@ -51,6 +48,7 @@
         _recentHours    = [decoder decodeObjectForKey:RECENTHOURS];
         _totalHours     = [decoder decodeObjectForKey:TOTALHOURS];
         _lastUpdated    = [decoder decodeObjectForKey:LASTUPDATE];
+        _currentGame    = [decoder decodeObjectForKey:CURRENTGAME];
     }
     return self;
 }
@@ -108,6 +106,7 @@
     [encoder encodeObject:self.recentHours forKey:RECENTHOURS];
     [encoder encodeObject:self.totalHours forKey:TOTALHOURS];
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
+    [encoder encodeObject:self.currentGame forKey:CURRENTGAME];
 }
 
 @end

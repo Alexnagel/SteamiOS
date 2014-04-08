@@ -15,5 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *recentHoursLabel;
 @property (weak, nonatomic) IBOutlet UILabel *totalHoursLabel;
 @property (weak, nonatomic) IBOutlet UITableView *gamesTable;
+@property (weak, nonatomic) IBOutlet UILabel *currentGameLabel;
 
 @end

@@ -153,12 +153,11 @@
 
 - (void)setUserItems
 {
-    // Update the user name and set status to last seen time
+    // Update the user name
     _usernameLabel.text = _user.playerName;
-    _lastSeenLabel.text = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
     
     // Update the User played hours labels
-    _recentHoursLabel.text = [NSString stringWithFormat:@"%@ hours past 2 weeks", _user.recentHours ];
+    _recentHoursLabel.text = [NSString stringWithFormat:@"%@ hours last 2 weeks", _user.recentHours ];
     _totalHoursLabel.text = [NSString stringWithFormat:@"%@ hours on record", _user.totalHours];
     
     // Update the user status
@@ -172,29 +171,41 @@
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *lastSeenLabel = _lastSeenLabel.text;
+        NSString *currentGameLabel = _currentGameLabel.text;
         
         NSInteger onlineState = [[_apiService getUserStatus] integerValue];
-        switch (onlineState) {
-            case 1:
-                lastSeenLabel = @"Online"; break;
-            case 2:
-                lastSeenLabel = @"Busy"; break;
-            case 3:
-                lastSeenLabel = @"Away"; break;
-            case 4:
-                lastSeenLabel = @"Snooze"; break;
-            case 5:
-                lastSeenLabel = @"Looking to trade"; break;
-            case 6:
-                lastSeenLabel = @"Looking to play"; break;
-                
-            default:
-                break;
+        NSString *currentGameString = [_apiService getCurrentGame];
+        currentGameLabel = [[NSString alloc] initWithFormat:@"%@",currentGameString];
+        if ([currentGameString isEqual: @""]){
+            switch (onlineState) {
+                case 1:
+                    lastSeenLabel = @"Online"; break;
+                case 2:
+                    lastSeenLabel = @"Busy"; break;
+                case 3:
+                    lastSeenLabel = @"Away"; break;
+                case 4:
+                    lastSeenLabel = @"Snooze"; break;
+                case 5:
+                    lastSeenLabel = @"Looking to trade"; break;
+                case 6:
+                    lastSeenLabel = @"Looking to play"; break;
+                    
+                default:
+                    lastSeenLabel = [[NSString alloc] initWithFormat:@"Last seen: %@",_user.lastLogOff];
+                    break;
+            }
         }
+        else{
+            lastSeenLabel = @"In-Game";
+        };
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (![lastSeenLabel isEqualToString:_lastSeenLabel.text]){
                 _lastSeenLabel.text = lastSeenLabel;
+            }
+            if (![currentGameLabel isEqualToString:_currentGameLabel.text]){
+                _currentGameLabel.text = currentGameLabel;
             }
         });
     });
@@ -249,8 +260,19 @@
     STUserGame *game    = (STUserGame *)[_user.recentGames objectAtIndex:indexPath.row];
     cell.textLabel.text = game.gameName;
     
+    // Add DisclosureIndicator if there are achievements
+    if (game.hasAchievements)
+    {
+        //cell.userInteractionEnabled = YES;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    else{
+        //cell.userInteractionEnabled = NO;
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
     // The hours played over last two weeks and in total
-    cell.detailTextLabel.text   = ([game.playtimeTwoWeeks floatValue] > 0) ? [NSString stringWithFormat:@"%@ hours past 2 weeks / %.1f hours on record", game.playtimeTwoWeeks, [game.playtimeForever floatValue]] : [NSString stringWithFormat:@"%.1f hours on record", [game.playtimeForever floatValue]] ;
+    cell.detailTextLabel.text   = ([game.playtimeTwoWeeks floatValue] > 0) ? [NSString stringWithFormat:@"%.1f hrs on record / %@ hrs last 2 weeks", [game.playtimeForever floatValue], game.playtimeTwoWeeks] : [NSString stringWithFormat:@"%.1f hrs on record", [game.playtimeForever floatValue]] ;
     
     // Set the game icon
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -263,7 +285,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_rowLoading == NO) {
+    STGame *gm = (STGame *)[_user.recentGames objectAtIndex:indexPath.row];
+    
+    if (_rowLoading == NO && gm.hasAchievements == YES) {
+        
         // Set rowloading to YES
         _rowLoading = YES;
         

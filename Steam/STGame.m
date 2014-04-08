@@ -47,7 +47,7 @@
         
         // Set the string for the achievements object key (Encoding)
         _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
-        _hasAchievements    = YES;
+        _hasAchievements    = [jsonData[@"has_community_visible_stats"] boolValue];
     }
     return self;
 }
@@ -65,7 +65,7 @@
         _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
         _achievements       = [decoder decodeObjectForKey:_achievementStr];
         _achievementCount   = [decoder decodeObjectForKey:ACHIEVEMENTCOUNT];
-        _hasAchievements    = (BOOL)[decoder decodeObjectForKey:HASACHIEVEMENTS];
+        _hasAchievements    = [decoder decodeBoolForKey:HASACHIEVEMENTS];
     }
     return self;
 }
@@ -121,6 +121,7 @@
     [encoder encodeObject:self.lastUpdated forKey:LASTUPDATE];
     [encoder encodeObject:self.achievements forKey:_achievementStr];
     [encoder encodeObject:self.achievementCount forKey:ACHIEVEMENTCOUNT];
+    [encoder encodeBool:self.hasAchievements forKey:HASACHIEVEMENTS];
 }
 
 @end

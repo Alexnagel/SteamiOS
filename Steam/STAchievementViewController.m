@@ -54,6 +54,14 @@
         self.achievementTable.backgroundView = emptyView;
         self.achievementTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
+    else{
+        // Sort achievements on rarity
+        _achievementArray = [_achievementArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+            double first = [[(STAchievement*)a globalPercentage] doubleValue];
+            double second = [[(STAchievement*)b globalPercentage] doubleValue];
+            return (second > first);
+        }];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -93,8 +101,6 @@
     
     cell.nameLabel.text = achievement.name;
     cell.descriptionLabel.text = achievement.description;
-    cell.descriptionLabel.numberOfLines = 0;
-    cell.descriptionLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     cell.percentageLabel.text = [NSString stringWithFormat:@"%@%% of all players",achievement.globalPercentage];
     [self loadImageAsync:cell.iconView WithImage:[achievement getAchievementIcon]];
 
