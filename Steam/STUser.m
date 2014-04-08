@@ -30,8 +30,8 @@
         _onlineState = json[@"personastate"];
         
         // Capitalize first letter
-        /*_playerName = [[[_playerName substringToIndex:1] uppercaseString]
-                       stringByAppendingString:[_playerName substringFromIndex:1]];*/
+        _playerName = [[[_playerName substringToIndex:1] uppercaseString]
+                       stringByAppendingString:[_playerName substringFromIndex:1]];
         
         // Save last updated
         _lastUpdated = [[NSDate alloc] init];
@@ -72,6 +72,7 @@
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[lastLogOff longLongValue]];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd MMM HH:mm"];
+    
     // Format the string to human readable string
     lastLogOffStr = [formatter stringFromDate:date];
     

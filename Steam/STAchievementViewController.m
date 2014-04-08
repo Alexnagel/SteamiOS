@@ -36,6 +36,24 @@
     [self.logoView setImage:_game.imgLogo];
     [self.achievementLabel setText:_game.achievementsAchieved];
     [self.totalPlayedLabel setText:[NSString stringWithFormat:@"%@ hrs on record", _game.playtimeForever]];
+    
+    if (!_game.hasAchievements) {
+        UIView *emptyView = [[UIView alloc] init];
+        [emptyView setFrame:CGRectMake(0,
+                                       0,
+                                       _achievementTable.frame.size.width,
+                                       _achievementTable.frame.size.height)];
+        
+        UILabel *emptyLabel      = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 250, 43)];
+        emptyLabel.font          = [UIFont systemFontOfSize:13];
+        emptyLabel.text          = @"This game has no achievements...";
+        emptyLabel.textAlignment = NSTextAlignmentCenter;
+        [emptyLabel setCenter:emptyView.center];
+        [emptyView addSubview:emptyLabel];
+        
+        self.achievementTable.backgroundView = emptyView;
+        self.achievementTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
 }
 
 - (void)didReceiveMemoryWarning

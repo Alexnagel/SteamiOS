@@ -12,6 +12,7 @@
 #define PLAYFOREVER @"playtimeforever"
 #define PLAYTWOWEEKS @"playtimetwoweeks"
 #define USERACHIEVED @"userachieved"
+#define USERID @"userid"
 
 // Subclass of STGame
 // UserGame has the user information in it too
@@ -37,6 +38,7 @@
         _playtimeForever    = [decoder decodeObjectForKey:PLAYFOREVER];
         _playtimeTwoWeeks   = [decoder decodeObjectForKey:PLAYTWOWEEKS];
         _userAchievements   = [decoder decodeObjectForKey:USERACHIEVED];
+        _userID             = [decoder decodeObjectForKey:USERID];
     }
     return self;
 }
@@ -68,14 +70,21 @@
     _achievements = [apiService getGameAchievementsFromJSON:_gameID];
     _achievementCount = [NSString stringWithFormat:@"%lu",(unsigned long)[_achievements count]];
     
-    _userAchievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID];
+    // Only get the user achievements if there are any achievements
+    if ([_achievementCount isEqualToString:@"0"]) {
+        _hasAchievements = NO;
+    } else {
+        _userAchievements = [apiService getUserGameAchievementsFromJSON:_achievements ForApp:_gameID];
+    }
     _lastUpdated = [[NSDate alloc] init];
 }
 
 - (NSString *)achievementsAchieved
 {
-    float percentage = (100 * [_userAchievements doubleValue])/[_achievementCount doubleValue];
-    if (isnan(percentage)) {percentage=100;}
+    float percentage = (100 * [_userAchievements doubleValue]) / [_achievementCount doubleValue];
+    if (isnan(percentage)) {
+        percentage = 100;
+    }
     return [NSString stringWithFormat:@"%@ of %@ (%.f%%)", _userAchievements, _achievementCount, percentage];
 }
 
@@ -91,6 +100,7 @@
     [encoder encodeObject:self.playtimeForever forKey:PLAYFOREVER];
     [encoder encodeObject:self.playtimeTwoWeeks forKey:PLAYTWOWEEKS];
     [encoder encodeObject:self.userAchievements forKey:USERACHIEVED];
+    [encoder encodeObject:self.userID forKey:USERID];
 }
 
 @end

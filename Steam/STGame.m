@@ -17,6 +17,7 @@
 #define LASTUPDATE @"lastupdated"
 #define GAMEICON @"gameicon"
 #define ACHIEVEMENTCOUNT @"achievementcount"
+#define HASACHIEVEMENTS @"hasachievements"
 
 #define IMAGEURL @"http://media.steampowered.com/steamcommunity/public/images/apps/%1$@/%2$@.jpg"
 
@@ -32,6 +33,7 @@
 @synthesize achievements     = _achievements;
 @synthesize achievementCount = _achievementCount;
 @synthesize lastUpdated      = _lastUpdated;
+@synthesize hasAchievements  = _hasAchievements;
 
 - (id)initWithDictionary:(NSDictionary *)jsonData
 {
@@ -45,6 +47,7 @@
         
         // Set the string for the achievements object key (Encoding)
         _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
+        _hasAchievements    = YES;
     }
     return self;
 }
@@ -62,6 +65,7 @@
         _achievementStr     = [NSString stringWithFormat:@"achievements_%@",_gameID];
         _achievements       = [decoder decodeObjectForKey:_achievementStr];
         _achievementCount   = [decoder decodeObjectForKey:ACHIEVEMENTCOUNT];
+        _hasAchievements    = (BOOL)[decoder decodeObjectForKey:HASACHIEVEMENTS];
     }
     return self;
 }
@@ -74,7 +78,27 @@
     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]];
     result       = [UIImage imageWithData:data];
     
+    if (result == nil) {
+        result = [self getPlaceholderImage];
+    }
+    
     return result;
+}
+
+- (UIImage *)getPlaceholderImage
+{
+    CGRect rect = CGRectMake(0.0f, 0.0f, 35.0f, 35.0f);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    UIColor *gray = [UIColor grayColor];
+    CGContextSetFillColorWithColor(context, [gray CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
 }
 
 - (void)setGameAchievements

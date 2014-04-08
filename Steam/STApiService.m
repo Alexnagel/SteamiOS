@@ -100,10 +100,11 @@
         }
     }
     
-    return [self setGlobalPercentages:achievementDict ForApp:appID];
+    [self setGlobalPercentages:achievementDict ForApp:appID];
+    return achievementDict;
 }
 
-- (NSMutableDictionary *)setGlobalPercentages:(NSMutableDictionary *)achievements
+- (void)setGlobalPercentages:(NSMutableDictionary *)achievements
                                        ForApp:(NSString *)appID
 {
     NSDictionary *jsonData = nil;
@@ -139,11 +140,10 @@
     for (int s = ([sortedValues count]-1); s >= 0; s--) {
         NSLog(@" %@ = %@",[sortedKeys objectAtIndex:s],[sortedValues objectAtIndex:s]);
     }*/
-    return achievements;
 }
 
 - (NSString *)getUserGameAchievementsFromJSON:(NSMutableDictionary *)achievements
-                                ForApp:(NSString *)appID
+                                       ForApp:(NSString *)appID
 {
     NSDictionary *jsonData = nil;
     int achievedAmount = 0;

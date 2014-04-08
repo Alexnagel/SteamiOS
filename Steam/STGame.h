@@ -16,6 +16,7 @@
     UIImage  *_imgIcon;
     NSMutableDictionary *_achievements;
     NSString *_achievementCount;
+    BOOL _hasAchievements;
     NSDate *_lastUpdated;
 }
 
@@ -29,4 +30,5 @@
 
 @property (readonly) NSMutableDictionary *achievements;
 @property (readonly) NSString *achievementCount;
+@property (readonly) BOOL hasAchievements;
 @end
